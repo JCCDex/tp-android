@@ -18,6 +18,7 @@ import com.just.agentweb.AgentWeb;
 import com.tokenbank.R;
 import com.tokenbank.activity.ImportWalletActivity;
 import com.tokenbank.base.BaseWalletUtil;
+import com.tokenbank.base.BlockChainData;
 import com.tokenbank.base.TBController;
 import com.tokenbank.base.WCallback;
 import com.tokenbank.base.WalletInfoManager;
@@ -29,6 +30,8 @@ import com.tokenbank.utils.FileUtil;
 import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.ToastUtil;
 import com.zxing.activity.CaptureActivity;
+
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -57,10 +60,9 @@ public class JsNativeBridge {
     private String version,name,address;
     private String mFrom, mTo, mValue, mToken, mIssuer, mGas, mMemo,mGasPrice;
     private IWebCallBack mWebCallBack;
-    private WalletInfoManager.WData mCurrentWallet;
     private BaseWalletUtil mWalletUtil;
-    private WalletInfoManager.WData mWalletData; //当前使用哪个钱包转账
-
+    private WalletInfoManager.WData mCurrentWallet; //当前使用哪个钱包转账
+    private BlockChainData.Block block;
     public JsNativeBridge(AgentWeb agent, Context context, IWebCallBack callback) {
         this.mAgentWeb = agent;
         this.mContext = context;
@@ -71,8 +73,10 @@ public class JsNativeBridge {
 
     @JavascriptInterface
     public void callMessage(String methodName, String params, final String callbackId) {
-        mWalletData = WalletInfoManager.getInstance().getCurrentWallet();
+        mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
+        block = BlockChainData.getInstance().getBolckByHid(WalletInfoManager.getInstance().getWalletType());
         final GsonUtil result = new GsonUtil("{}");
+        Log.d(TAG, "callMessage: +++++++++++++++++++++   1"+methodName);
         switch (methodName) {
             case "getAppInfo":
                 PackageManager packageManager = mContext.getPackageManager();
@@ -91,7 +95,6 @@ public class JsNativeBridge {
                 infoData.putString("system", "android");
                 infoData.putString("version", version);
                 infoData.putString("sys_version", Build.VERSION.SDK_INT + "");
-
                 result.putBoolean("result", true);
                 result.put("data", infoData);
                 result.putString("msg", MSG_SUCCESS);
@@ -153,7 +156,7 @@ public class JsNativeBridge {
                 GsonUtil data = new GsonUtil("{}");
                 data.putString("address", mCurrentWallet.waddress);
                 data.putString("name",walletName);
-                data.putString("blockchain","moac");
+                data.putString("blockchain","jingtum");
                 result.putBoolean("result", true);
                 result.put("data", data);
                 result.putString("msg", MSG_SUCCESS);
@@ -169,7 +172,7 @@ public class JsNativeBridge {
                     notifySignResult(result,callbackId);
                     return;
                 }
-                SignParam.putString("secret",mWalletData.wpk);
+                SignParam.putString("secret",mCurrentWallet.wpk);
                 AppConfig.postOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -243,8 +246,63 @@ public class JsNativeBridge {
                         },
                     "TransactionType":"OfferCreate",
                     "Sequence":4368
-                 */
 
+                {
+                "Account":"jL2773nCXm3W6EjQu5H9TAt1iitJaftNVb",
+                "Destination":"jZ3Upe4Be53xVVoRqyiXqCkrXBMfegDP9",
+                "Fee":0.001,
+                "Amount":{"currency":"SWT","issuer":"","value":"1"},
+                "TransactionType":"Payment",
+                "Sequence":1,
+                "Memos":[{"Memo":{"MemoData":"恭喜发财，大吉大利"}}]
+                }
+
+                JSONObject transaction = new JSONObject();
+                transaction.put("Account", "jpgWGpfHz8GxqUjz5nb6ej8eZJQtiF6KhH");
+                transaction.put("Fee", 0.00001);
+                transaction.put("Flags", 0);
+                transaction.put("Destination", "j4JJb3c17HuwRoKycjtrd9adpmbrneEE6w");
+                transaction.put("Amount", 1);
+                transaction.put("TransactionType", "Payment");
+                transaction.put("Sequence", 1);
+                 */
+                final GsonUtil trans = new GsonUtil(params);
+                trans.putInt("Flags", 0);
+                GsonUtil SwtcTx = new GsonUtil("{}");
+                SwtcTx.put("transaction", trans);
+                SwtcTx.putString("secret", mCurrentWallet.wpk);
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new PwdDialog(mContext, new PwdDialog.PwdResult() {
+                            @Override
+                            public void authPwd(String tag, boolean flag) {
+                                if (TextUtils.equals(tag, "transaction")) {
+                                    if (flag) {
+
+                                        mWalletUtil.signedTransaction(SwtcTx, new WCallback() {
+                                            @Override
+                                            public void onGetWResult(int ret, GsonUtil extra) {
+                                                if( ret == 0 ){
+                                                    String signature = extra.getString("signature","");
+                                                    result.putBoolean("result", true);
+                                                    result.putString("data", signature);
+                                                    result.putString("msg", MSG_SUCCESS);
+                                                    Log.d(TAG, "onGetWResult: success !!!!!!"+signature);
+                                                    notifySignResult(result,callbackId);
+                                                } else {
+                                                    Log.d(TAG, "onGetWResult: err !!!!!!");
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        ToastUtil.toast(AppConfig.getContext(), AppConfig.getContext().getString(R.string.toast_order_password_incorrect));
+                                    }
+                                }
+                            }
+                        }, mCurrentWallet.whash, "transaction").show();
+                    }
+                });
                 break;
             case "saveImage":
                 Log.d(TAG, "callHandler: 开始保存图片 url = "+params);
@@ -309,7 +367,7 @@ public class JsNativeBridge {
                  */
                 final GsonUtil MoacTx = new GsonUtil(params);
                 MoacTx.putString("gas",MoacTx.getString("gasPrice",""));
-                MoacTx.putString("privateKey", mWalletData.wpk);
+                MoacTx.putString("privateKey", mCurrentWallet.wpk);
                 MoacTx.putString("senderAddress", MoacTx.getString("from",""));
                 MoacTx.putString("receiverAddress", MoacTx.getString("to",""));
                 MoacTx.putDouble("tokencount", MoacTx.getDouble("value",0.0f));
@@ -369,7 +427,6 @@ public class JsNativeBridge {
                     notifySignResult(result,callbackId);
                     return;
                 }
-                String contract = TransactionParam.getString("contract","");
                 TransactionParam.putString("secret",mCurrentWallet.wpk);
                 AppConfig.postOnUiThread(new Runnable() {
                     @Override
