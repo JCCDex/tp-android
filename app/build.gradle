@@ -82,7 +82,7 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'org.greenrobot:eventbus:3.0.0'
-    implementation 'com.github.JCCDex:jcc-android-base-lib:0.2.0'
+    implementation 'com.github.wzh9967:jcc-android-base-lib:1.0.2'
     implementation 'com.just.agentweb:agentweb:4.1.2'
     implementation('com.github.LuckSiege.PictureSelector:picture_library:v2.2.4', {
         exclude group: 'io.reactivex.rxjava2'

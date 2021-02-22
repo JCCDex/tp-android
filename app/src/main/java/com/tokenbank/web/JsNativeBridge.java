@@ -31,6 +31,8 @@ import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.ToastUtil;
 import com.zxing.activity.CaptureActivity;
 
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -75,7 +77,7 @@ public class JsNativeBridge {
         mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
         block = BlockChainData.getInstance().getBolckByHid(WalletInfoManager.getInstance().getWalletType());
         GsonUtil data = new GsonUtil("{}");
-        Log.d(TAG, "callMessage: "+methodName + "be called");
+        Log.d(TAG, "callMessage: "+methodName + " be called");
         switch (methodName) {
             case "getAppInfo":
                 PackageManager packageManager = mContext.getPackageManager();
@@ -196,6 +198,15 @@ public class JsNativeBridge {
 
                 break;
             case "moacTokenTransfer":
+                /*
+                    from: '0xaaaaaaa',
+                    to: '0xaaaaaab',
+                    amount: '100',
+                    gasLimit: 60000,
+                    tokenName: 'MOAC',
+                    decimal: 18,
+                    contract: ''
+                 */
                 final GsonUtil MoacTx = new GsonUtil(params);
                 if(!mCurrentWallet.waddress.toLowerCase().equals(MoacTx.getString("address",""))){
                     notifyFailedResult("has no this wallet",callbackId);
@@ -258,6 +269,8 @@ public class JsNativeBridge {
                 //导航栏隐藏与否
                 break;
             case "signJingtumTransaction":
+                //params = params.replace("TakerPays","Amount");
+                //params = params.replace("Platform","Destination");
                 final GsonUtil trans = new GsonUtil(params);
                 trans.putInt("Flags", 0);
                 GsonUtil SwtcTx = new GsonUtil("{}");
@@ -271,15 +284,16 @@ public class JsNativeBridge {
                             public void authPwd(String tag, boolean flag) {
                                 if (TextUtils.equals(tag, "transaction")) {
                                     if (flag) {
-
+                                        Log.d(TAG, "authPwd: do it ++++");
                                         mWalletUtil.signedTransaction(SwtcTx, new WCallback() {
                                             @Override
                                             public void onGetWResult(int ret, GsonUtil extra) {
                                                 if( ret == 0 ){
                                                     String signature = extra.getString("signature","");
+                                                    Log.d(TAG, "onGetWResult: 签名 "+signature);
                                                     notifySuccessResult(signature,callbackId);
                                                 } else {
-                                                    Log.d(TAG, "onGetWResult: err !!!!!!");
+                                                    Log.d(TAG, "onGetWResult: 签名错误!!!!!!");
                                                     notifyFailedResult("sign failed",callbackId);
                                                 }
                                             }
@@ -398,6 +412,20 @@ public class JsNativeBridge {
                 break;
 
             case "sendMoacTransaction":
+                /*
+                    from: '0xaaaaaaa',
+                    to: '0xaaaaaab',
+                    gasPrice: 100000000,
+                    gasLimit: 60000,
+                    data: '0xaawefwefwefwefwefef',
+                    value: 1000000000,
+                    chainId: 99,
+                    via: '',
+                    shardingFlag: 0,
+                 */
+
+
+
                 final GsonUtil TransactionParam = new GsonUtil(params);
                 if(!mCurrentWallet.waddress.toLowerCase().equals(TransactionParam.getString("address",""))){
                     notifyFailedResult("has no this wallet",callbackId);
