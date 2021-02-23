@@ -8,4 +8,6 @@ public interface IWebCallBack {
     void switchFullScreen(String status);
 
     void rollHorizontal();
+
+    void setMenubar(boolean isShow);
 }

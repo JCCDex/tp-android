@@ -31,8 +31,6 @@ import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.ToastUtil;
 import com.zxing.activity.CaptureActivity;
 
-import org.json.JSONObject;
-
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -160,8 +158,6 @@ public class JsNativeBridge {
 
             case "sign":
                 final GsonUtil SignParam = new GsonUtil(params);
-                Log.d(TAG, "callHandler: "+mCurrentWallet.waddress.toLowerCase() );
-                Log.d(TAG, "callHandler: "+SignParam.getString("address","").toLowerCase() );
                 if(!mCurrentWallet.waddress.toLowerCase().equals(SignParam.getString("address",""))){
                     notifyFailedResult("has no this wallet",callbackId);
                     return;
@@ -265,8 +261,14 @@ public class JsNativeBridge {
                 break;
 
             case "setMenubar":
-                //未开发导航栏
-                //导航栏隐藏与否
+                //1 - open, 0 - close(default)
+                if (mWebCallBack != null) {
+                    final GsonUtil Show_flag = new GsonUtil(params);
+                    switch (Show_flag.getInt("",0)){
+                        case 1 :  mWebCallBack.setMenubar(true); break;
+                        case 0 :  mWebCallBack.setMenubar(false); break;
+                    }
+                }
                 break;
             case "signJingtumTransaction":
                 //params = params.replace("TakerPays","Amount");
@@ -309,11 +311,11 @@ public class JsNativeBridge {
                 break;
             case "saveImage":
                 Log.d(TAG, "callHandler: 开始保存图片 url = "+params);
-                String picUrl = params;
+                final GsonUtil picUrl = new GsonUtil(params);
                 if(!picUrl.equals("")){
                     try {
                         //通过url获取图片
-                        URL iconUrl=new URL(picUrl);
+                        URL iconUrl=new URL(picUrl.getString("url",""));
                         URLConnection connection=iconUrl.openConnection();
                         HttpURLConnection httpURLConnection= (HttpURLConnection) connection;
                         int length = httpURLConnection.getContentLength();
@@ -325,13 +327,18 @@ public class JsNativeBridge {
                         inputStream.close();
                         //保存图片
                         FileUtil.saveBitmap(AppConfig.getContext(),mBitmap);
-                        new MsgDialog(AppConfig.getContext(), mContext.getString(R.string.picture_save_success)).show();
+                        AppConfig.postOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtil.toast(AppConfig.getContext(), AppConfig.getContext().getString(R.string.picture_save_success));
+                            }
+                        });
                     } catch (Exception e) {
                         Log.d(TAG, "callHandler: 保存失败");
                         AppConfig.postOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                new MsgDialog(AppConfig.getContext(), mContext.getString(R.string.picture_save_false)).show();
+                                ToastUtil.toast(AppConfig.getContext(), AppConfig.getContext().getString(R.string.picture_save_false));
                             }
                         });
                         e.printStackTrace();
@@ -423,9 +430,6 @@ public class JsNativeBridge {
                     via: '',
                     shardingFlag: 0,
                  */
-
-
-
                 final GsonUtil TransactionParam = new GsonUtil(params);
                 if(!mCurrentWallet.waddress.toLowerCase().equals(TransactionParam.getString("address",""))){
                     notifyFailedResult("has no this wallet",callbackId);
@@ -444,6 +448,7 @@ public class JsNativeBridge {
                                             @Override
                                             public void onGetWResult(int ret, GsonUtil extra) {
                                                if(ret == 0){
+
                                                    mWalletUtil.sendSignedTransaction(extra.getString("r", ""), new WCallback() {
                                                        @Override
                                                        public void onGetWResult(int ret, GsonUtil extra) {
@@ -456,7 +461,6 @@ public class JsNativeBridge {
                                                        }
                                                    });
                                                }
-
                                             }
                                         });
                                     } else {

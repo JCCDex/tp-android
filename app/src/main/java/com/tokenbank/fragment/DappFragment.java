@@ -64,7 +64,7 @@ public class DappFragment extends BaseFragment {
         if (!TextUtils.isEmpty(searchUrl)) {
             if (searchUrl.startsWith("http://") || searchUrl.startsWith("https://")) {
                 if(searchUrl.equals("http://test")){
-                    searchUrl = "file:///android_asset/hello.html";//测试
+                    searchUrl = "file:///android_asset/DappTestPage.html";//测试
                 }
                 startActivity(new Intent(getActivity(), WebActivity.class)
                         .putExtra(Constant.LOAD_URL, searchUrl));
