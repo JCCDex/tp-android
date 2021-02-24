@@ -23,13 +23,12 @@
         Connected();
         function Connected(){
             let isConnected;
-            if(window.JsNativeBridge!=null&&typeof(window.JsNativeBridge)!="undefined"){
+            if(window.TPJSBrigeClient!=null&&typeof(window.TPJSBrigeClient)!="undefined"){
                 isConnected = "true"
             }else{
-                alert(typeof(window.android));
                 isConnected = "false"
             }
-            alert("isConnected:  1  " + isConnected);
+            alert("isConnected:   " + isConnected);
         }
 
         function testClick(FunctionName) {
@@ -47,25 +46,27 @@
                     break;
                 case "getCurrentWallet" :
                     tp.getCurrentWallet().then((result) => {
-                        showElement("获取当前交易钱包        result = " + JSON.stringify(result));
+                        showElement("获取当前交易钱包   result = " + JSON.stringify(result));
                     })
                     break;
                 case "getNodeUrl" :
                     tp.getNodeUrl({blockchain: 'eos'}).then((result) => {
-                        showElement("获取节点url        result = " + JSON.stringify(result));
+                        showElement("获取节点url   result = " + JSON.stringify(result));
                     })
                     break;
                 case "sign" :
                     //交易签名
-                    let paramsjson = new Object();
-                    paramsjson.address = '0x981d4bc976c221b3b42270be6dcab72d37d2e0cd'
-                    paramsjson.to = "0xb4860ef01adae0f0714776d1c35e7ad4b0937b79"
-                    paramsjson.value = "1000000000000000000"
-                    paramsjson.gasPrice = "10000000000"
-                    paramsjson.gasLimit = "23000"
-                    paramsjson.data = ""
-                    tp.sign(JSON.stringify(paramsjson)).then((result) => {
-                        showElement("result = " + JSON.stringify(result))
+                     tp.getCurrentWallet().then((result) => {
+                          tp.sign({
+                           address: result.data.address,
+                            to: '0xb4860ef01adae0f0714776d1c35e7ad4b0937b79',
+                            value: '1000000000000000000',
+                           gasPrice: '10000000000',
+                            gasLimit: '23000',
+                            data: ''
+                          }).then((result) => {
+                              showElement("result = " + JSON.stringify(result))
+                          })
                     })
                     break;
                 case "importWallet" :
@@ -75,13 +76,17 @@
                 case "invokeQRScanner" :
                     //打开扫描
                     tp.invokeQRScanner().then((result) => {
-                        showElement("扫描结果        result = " + JSON.stringify(result));
+                        showElement("扫描结果result = " + JSON.stringify(result));
                     })
                     break;
                 case "shareNewsToSNS" :
                     //分享
-                    tp.shareNewsToSNS().then((ret, result) => {
-                        showElement("ret = " + ret + "        result = " + JSON.stringify(result))
+                     tp.shareNewsToSNS({
+                      title: 'TokenPocket',
+                      desc: 'Your Universal Wallet',
+                      url: 'https://www.mytokenpocket.vip/',
+                      previewImage: 'https://www.mytokenpocket.vip/images/index/logo.png'}).then((ret, result) => {
+                        showElement("ret = " + ret + "result = " + JSON.stringify(result))
                     })
                     break;
                 case "fullScreen" :
@@ -103,20 +108,22 @@
                 case "popGestureRecognizerEnable" :
                     //禁止iOS自带的左滑手势返回，对安卓无影响
                     tp.popGestureRecognizerEnable((ret, result) =>{
-                        showElement("ret = " + ret + "        result = " + JSON.stringify(result))
+                        showElement("ret = " + ret + "result = " + JSON.stringify(result))
                     })
                     break;
                 case "sendMoacTransaction" :
-                    let params = new Object();
-                    params.address = "0x981d4bc976c221b3b42270be6dcab72d37d2e0cd"
-                    params.to = "0xb4860ef01adae0f0714776d1c35e7ad4b0937b79"
-                    params.value = "1000000000000000"
-                    params.gasPrice = "10000000000"
-                    params.gasLimit = "24000"
-                    params.data = ""
-                    tp.sendMoacTransaction(JSON.stringify(params)).then((hash) => {
-                        showElement("       hash = " + JSON.stringify(hash))
-                    })
+                tp.getCurrentWallet().then((result) => {
+                        tp.sendMoacTransaction({
+                           address: result.data.address,
+                            to: '0xb4860ef01adae0f0714776d1c35e7ad4b0937b79',
+                            value: '1000000000000000000',
+                           gasPrice: '10000000000',
+                            gasLimit: '23000',
+                            data: ''
+                          }).then((hash) => {
+                            showElement("hash = " + JSON.stringify(hash))
+                        })
+                   })
                     break;
                 case "setMenubar" :
                     //设置导航条
@@ -130,9 +137,55 @@
                     //保存图片 通过url保存
                     tp.saveImage({url: 'https://dapp.mytokenpocket.vip/tokenpocket_logo.png'})
                     break;
+                case "signMoacTransaction":
+                tp.signMoacTransaction({
+                    from: '0xaaaaaaa',
+                    to: '0xaaaaaab',
+                    gasPrice: 100000000,
+                    gasLimit: 60000,
+                    data: '0xaawefwefwefwefwefef',
+                    value: 1000000000,
+                    chainId: 99,
+                    via: '',
+                    shardingFlag: 0,
+                }).then((hash) => {
+                            showElement("raw = " + JSON.stringify(hash))
+                        })
+                break;
+                case "signJingtumTransaction":
+                 tp.getCurrentWallet().then((result) => {
+                  tp.signJingtumTransaction({
+                      "Account":result.data.address,
+                      "Fee": 0.00001,
+                      "Flags": 524288,
+                      "TakerGets":"111",
+                      "TakerPays":{
+                          "currency":"CNY",
+                          "issuer":"jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or",
+                          "value":"1.2321"
+                          },
+                      "TransactionType":"OfferCreate",
+                      "Sequence":4368
+                  }).then((hash) => {
+                            showElement("rew = " + JSON.stringify(hash))
+                        })
+                })
+                break;
+                case "moacTokenTransfer" :
+                  tp.moacTokenTransfer({
+                      from: '0xaaaaaaa',
+                      to: '0xaaaaaab',
+                      amount: '100',
+                      gasLimit: 60000,
+                      tokenName: 'MOAC',
+                      decimal: 18,
+                      contract: ''
+                  }).then((hash) => {
+                            showElement("rew = " + JSON.stringify(hash))
+                        })
+                break;
             }
         }
-
         function showElement(msg) {
         alert("调用成功: " + msg);
         }
@@ -161,11 +214,12 @@
 <p><input type="button" class = "button" id="enter12" value="close" onclick="testClick('close');"/></p>
 <p><input type="button" class = "button" id="enter13" value="back" onclick="testClick('back');"/></p>
 <p><input type="button" class = "button" id="enter14" value="rollHorizontal" onclick="testClick('rollHorizontal');"/></p>
-<p><input type="button" class = "button" id="enter15" value="popGestureRecognizerEnable" onclick="testClick('popGestureRecognizerEnable');"/></p>
 <p><input type="button" class = "button" id="enter16" value="sendMoacTransaction" onclick="testClick('sendMoacTransaction');"/></p>
 <p><input type="button" class = "button" id="enter17" value="setMenubar" onclick="testClick('setMenubar');"/></p>
-<p><input type="button" class = "button" id="enter18" value="forwardNavigationGesturesEnable" onclick="testClick('forwardNavigationGesturesEnable');"/></p>
 <p><input type="button" class = "button" id="enter19" value="saveImage" onclick="testClick('saveImage');"/></p>
+<p><input type="button" class = "button" id="enter20" value="signMoacTransaction" onclick="testClick('signMoacTransaction');"/></p>
+<p><input type="button" class = "button" id="enter21" value="signJingtumTransaction" onclick="testClick('signJingtumTransaction');"/></p>
+<p><input type="button" class = "button" id="enter22" value="moacTokenTransfer" onclick="testClick('moacTokenTransfer');"/></p>
 </body>
 
 </html>

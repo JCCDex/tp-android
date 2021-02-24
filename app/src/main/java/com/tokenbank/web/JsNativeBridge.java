@@ -23,7 +23,6 @@ import com.tokenbank.base.TBController;
 import com.tokenbank.base.WCallback;
 import com.tokenbank.base.WalletInfoManager;
 import com.tokenbank.config.AppConfig;
-import com.tokenbank.dialog.MsgDialog;
 import com.tokenbank.dialog.PwdDialog;
 import com.tokenbank.utils.DeviceUtil;
 import com.tokenbank.utils.FileUtil;
@@ -158,8 +157,8 @@ public class JsNativeBridge {
 
             case "sign":
                 final GsonUtil SignParam = new GsonUtil(params);
-                if(!mCurrentWallet.waddress.toLowerCase().equals(SignParam.getString("address",""))){
-                    notifyFailedResult("has no this wallet",callbackId);
+                if(!mCurrentWallet.waddress.toLowerCase().equals(SignParam.getString("address","").toLowerCase())){
+                    notifyFailedResult("非当前钱包",callbackId);
                     return;
                 }
                 SignParam.putString("secret",mCurrentWallet.wpk);
@@ -204,8 +203,8 @@ public class JsNativeBridge {
                     contract: ''
                  */
                 final GsonUtil MoacTx = new GsonUtil(params);
-                if(!mCurrentWallet.waddress.toLowerCase().equals(MoacTx.getString("address",""))){
-                    notifyFailedResult("has no this wallet",callbackId);
+                if(!mCurrentWallet.waddress.toLowerCase().equals(MoacTx.getString("address","").toLowerCase())){
+                    notifyFailedResult("非当前钱包",callbackId);
                     return;
                 }
                 MoacTx.putString("secret",mCurrentWallet.wpk);
@@ -274,6 +273,10 @@ public class JsNativeBridge {
                 //params = params.replace("TakerPays","Amount");
                 //params = params.replace("Platform","Destination");
                 final GsonUtil trans = new GsonUtil(params);
+                if(!mCurrentWallet.waddress.toLowerCase().equals(trans.getString("Account","").toLowerCase())){
+                    notifyFailedResult("非当前钱包",callbackId);
+                    return;
+                }
                 trans.putInt("Flags", 0);
                 GsonUtil SwtcTx = new GsonUtil("{}");
                 SwtcTx.put("transaction", trans);
@@ -330,7 +333,7 @@ public class JsNativeBridge {
                         AppConfig.postOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ToastUtil.toast(AppConfig.getContext(), AppConfig.getContext().getString(R.string.picture_save_success));
+                                ToastUtil.toast(AppConfig.getContext(), AppConfig.getContext().getString(R.string.picture_save_success)+"相册");
                             }
                         });
                     } catch (Exception e) {
@@ -375,6 +378,10 @@ public class JsNativeBridge {
                     shardingFlag: 0,
                  */
                 final GsonUtil TX = new GsonUtil(params);
+                if(!mCurrentWallet.waddress.toLowerCase().equals(TX.getString("from","").toLowerCase())){
+                    notifyFailedResult("非当前钱包",callbackId);
+                    return;
+                }
                 TX.putString("gas",TX.getString("gasPrice",""));
                 TX.putString("privateKey", mCurrentWallet.wpk);
                 TX.putString("senderAddress", TX.getString("from",""));
@@ -382,6 +389,11 @@ public class JsNativeBridge {
                 TX.putDouble("tokencount", TX.getDouble("value",0.0f));
                 TX.putDouble("gas", TX.getDouble("gasLimit",0.0f));
                 TX.putDouble("gasPrice", TX.getDouble("gasPrice",0.0f));
+                if(!mCurrentWallet.waddress.toLowerCase().equals(TX.getString("from",""))){
+                    notifyFailedResult("非当前钱包",callbackId);
+                    return;
+                }
+
                 AppConfig.postOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -431,7 +443,7 @@ public class JsNativeBridge {
                     shardingFlag: 0,
                  */
                 final GsonUtil TransactionParam = new GsonUtil(params);
-                if(!mCurrentWallet.waddress.toLowerCase().equals(TransactionParam.getString("address",""))){
+                if(!mCurrentWallet.waddress.toLowerCase().equals(TransactionParam.getString("from","").toLowerCase())){
                     notifyFailedResult("has no this wallet",callbackId);
                     return;
                 }
@@ -448,7 +460,6 @@ public class JsNativeBridge {
                                             @Override
                                             public void onGetWResult(int ret, GsonUtil extra) {
                                                if(ret == 0){
-
                                                    mWalletUtil.sendSignedTransaction(extra.getString("r", ""), new WCallback() {
                                                        @Override
                                                        public void onGetWResult(int ret, GsonUtil extra) {
