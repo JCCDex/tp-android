@@ -116,7 +116,7 @@ public class JsNativeBridge {
 
             case "getDeviceId":
                 String deviceId = DeviceUtil.generateDeviceUniqueId();
-                data.putString("deviceId", deviceId);
+                data.putString("device_id", deviceId);
                 this.mAgentWeb.getJsAccessEntrace().callJs("javascript:" + callbackId + "('" + data.toString() + "')");
                 break;
 
@@ -444,7 +444,7 @@ public class JsNativeBridge {
                  */
                 final GsonUtil TransactionParam = new GsonUtil(params);
                 if(!mCurrentWallet.waddress.toLowerCase().equals(TransactionParam.getString("from","").toLowerCase())){
-                    notifyFailedResult("has no this wallet",callbackId);
+                    notifyFailedResult("非当前钱包",callbackId);
                     return;
                 }
                 TransactionParam.putString("secret",mCurrentWallet.wpk);

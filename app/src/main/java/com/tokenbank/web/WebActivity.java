@@ -157,7 +157,7 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
         String msg = jsEvent.getMsg();
         String callbackId = jsEvent.getCallBackId();
         GsonUtil result = new GsonUtil("{}");
-        result.putString("result",msg);
+        result.putString("qrResult",msg);
         mAgentWeb.getJsAccessEntrace().callJs("javascript:" + callbackId + "('" + result.toString() + "')");
     }
 
