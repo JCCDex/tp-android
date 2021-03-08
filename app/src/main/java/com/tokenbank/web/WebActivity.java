@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -27,6 +28,11 @@ import com.tokenbank.view.TitleBar;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+
 /**
  * 浏览器功能
  */
@@ -37,24 +43,22 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
     protected AgentWeb mAgentWeb;
     private LinearLayout mLinearLayout;
     private JsNativeBridge mJsNativeBridge;
-
+    private MateMarkBridge mMateMarkBridge;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
-
         mTitleBar = (TitleBar) findViewById(R.id.title_bar);
         mTitleBar.setLeftDrawable(R.drawable.ic_back);
         mTitleBar.setTitle(getString(R.string.titleBar_dapp));
         mTitleBar.setRightTextColor(R.color.white);
         mTitleBar.setTitleBarClickListener(this);
-
         mLinearLayout = (LinearLayout) this.findViewById(R.id.container);
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator()
-                .setWebChromeClient(mWebChromeClient)
                 .setWebViewClient(mWebViewClient)//WebViewClient ， 与 WebView 使用一致 ，但是请勿获取WebView调用setWebViewClient(xx)方法了,会覆盖AgentWeb DefaultWebClient,同时相应的中间件也会失效。
+                .setWebChromeClient(mWebChromeClient)
                 .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK) //严格模式 Android 4.2.2 以下会放弃注入对象 ，使用AgentWebView没影响。
                 .setMainFrameErrorView(R.layout.agentweb_error_page, -1) //参数1是错误显示的布局，参数2点击刷新控件ID -1表示点击整个布局都刷新， AgentWeb 3.0.0 加入。
                 .additionalHttpHeader(getUrl(), "cookie", "41bc7ddf04a26b91803f6b11817a5a1c")
@@ -70,9 +74,17 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
         mAgentWeb.getAgentWebSettings().getWebSettings().setLoadWithOverviewMode(true); // 缩放至屏幕的大小
         //mAgentWeb.getWebCreator().getWebView().all
         //mAgentWeb.getWebCreator().getWebView()  获取WebView .
-        mJsNativeBridge = new JsNativeBridge(mAgentWeb, this, this);
-        //mAgentWeb.getJsInterfaceHolder().addJavaObject("JsNativeBridge", mJsNativeBridge);
-        mAgentWeb.getJsInterfaceHolder().addJavaObject("TPJSBrigeClient", mJsNativeBridge);
+        boolean flag = true;
+        //TODO dapp管理系统（发现功能）将会提供Dapp标识来确定具体的使用哪个 JSBridge
+        if(flag){
+            mMateMarkBridge = new MateMarkBridge(mAgentWeb, this, this);
+            mAgentWeb.getJsInterfaceHolder().addJavaObject("ethereum", mMateMarkBridge);
+            Log.d(TAG, "timeT: "+new Date().getTime());
+        } else {
+            mJsNativeBridge = new JsNativeBridge(mAgentWeb, this, this);
+            //mAgentWeb.getJsInterfaceHolder().addJavaObject("JsNativeBridge", mJsNativeBridge);
+            mAgentWeb.getJsInterfaceHolder().addJavaObject("TPJSBrigeClient", mJsNativeBridge);
+        }
     }
 
     private com.just.agentweb.WebViewClient mWebViewClient = new com.just.agentweb.WebViewClient() {
@@ -83,7 +95,11 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
+            view.evaluateJavascript(getJsFile(), new ValueCallback<String>() {
+                @Override public void onReceiveValue(String value) {//js与native交互的回调函数
+                    Log.d(TAG, "这个时间 api 注入完成 "+new Date().getTime());
+                }
+            });
         }
     };
 
@@ -98,8 +114,6 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
             Log.i("console", "["+consoleMessage.messageLevel()+"] "+ consoleMessage.message() + "(" +consoleMessage.sourceId()  + ":" + consoleMessage.lineNumber()+")");
             return super.onConsoleMessage(consoleMessage);
         }
-
-
     };
 
     //用户需要在打开WebActivity时传递对应的url
@@ -245,5 +259,27 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
     @Override
     public void onMiddleClick(View view) {
 
+    }
+
+    private String getJsFile(){
+        String jsStr = "";
+        try {
+            InputStream in = this.getAssets().open("MateMask.js");
+            byte buff[] = new byte[1024];
+            ByteArrayOutputStream fromFile = new ByteArrayOutputStream();
+            do {
+                int numRead = in.read(buff);
+                if (numRead <= 0) {
+                    break;
+                }
+                fromFile.write(buff, 0, numRead);
+            } while (true);
+            jsStr = fromFile.toString();
+            in.close();
+            fromFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsStr;
     }
 }

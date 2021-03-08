@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name = "viewport" content= "width=device-width , initial-scale=1.0">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <title></title>
+    <meta name="Generator" content="Cocoa HTML Writer">
+    <meta name="CocoaVersion" content="1504.76">
+    <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    body{
+        padding:0;
+        margin:0;
+    }
+
+    </style>
+    <script>
+    //用来验证框架可用性，MateMask提供了专用的测试 demo
+        function Connected(){
+            test1().then((result) =>{
+                showElement(result)
+            })
+        }
+
+        async function test1(){
+            const { ethereum } = window
+            const _accounts = await ethereum.request({
+                method: 'eth_accounts',
+            })
+            console.log("_accounts = "+_accounts[0])
+            return _accounts;
+        }
+
+        function showElement(msg) {
+            alert("调用成功:" + msg);
+        }
+
+
+    </script>
+</head>
+<!--
+ <body style="width: 100%;height: 100%;padding: 0px">
+
+<div id="div_box"
+     style="width: 100%;min-height: 100%;position: absolute;background: #0ff;margin-top: -50px;margin: 0px">
+</div>
+<div class = "button" id="test"></div>
+</body>
+ -->
+<body>
+<p><input type="button" class = "button" id="enter" value="Connected" onclick="Connected()"/></p>
+</body>
+
+</html>

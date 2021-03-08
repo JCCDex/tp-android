@@ -235,6 +235,7 @@
     <string name="dialog_content_switch_eos_wallet">The scanned address is Eos address, but the current wallet is not Eos wallet, whether to switch to Eos wallet.</string>
     <string name="content_to_account">To</string>
     <string name="content_payment_account">Pay</string>
+    <string name="sign_failed">sign failed</string>
     <string name="eos_browser">EOS explorer</string>
     <string name="picture_save_false">save picture false</string>
 </resources>

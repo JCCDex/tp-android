@@ -237,5 +237,6 @@
     <string name="content_payment_account">付款账号</string>
     <string name="eos_browser">EOS浏览器</string>
     <string name="picture_save_false">图片保存失败</string>
+    <string name="sign_failed">签名失败</string>
 
 </resources>
