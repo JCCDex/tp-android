@@ -54,7 +54,6 @@ public class MateMarkBridge {
             case "net_version":
                 notifySuccessResult("1.2",callbackId);
                 break;
-
             case "eth_chainId":
                 notifySuccessResult("1",callbackId);
                 break;
@@ -119,7 +118,6 @@ public class MateMarkBridge {
                             @Override
                             public void onGetWResult(int ret, GsonUtil extra) {
                                 if (ret == 0) {
-                                    Log.d(TAG, "onGetWResult: "+extra.toString());
                                     notifySuccessResult(extra.getString("balance",""),callbackId);
                                 }
                             }
@@ -129,7 +127,6 @@ public class MateMarkBridge {
                 break;
             case "eth_estimateGas":break;
             case "eth_sendTransaction":
-
                 Log.d(TAG, "callHandler: "+params);
                 final GsonUtil TransactionParam = new GsonUtil(params);
                 TransactionParam.putString("secret",mCurrentWallet.wpk);

@@ -1,7 +1,8 @@
 package com.tokenbank.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,21 +12,21 @@ import com.tokenbank.R;
 import com.tokenbank.activity.AboutActivity;
 import com.tokenbank.activity.LanguageActivity;
 import com.tokenbank.activity.ManageWalletActivity;
+import com.tokenbank.activity.NodeSettingActivity;
 import com.tokenbank.activity.TransactionRecordActivity;
 import com.tokenbank.activity.WebBrowserActivity;
-import com.tokenbank.base.TBController;
-import com.tokenbank.base.WalletInfoManager;
 import com.tokenbank.config.Constant;
 
 
 public class MainUserFragment extends BaseFragment implements View.OnClickListener {
-
+    private static final String TAG = "MainUserFragment";
     private RelativeLayout mLayoutManageWallet;
     private RelativeLayout mLayoutRecordTransaction;
     private RelativeLayout mLayoutNotification;
     private RelativeLayout mLayoutHelp;
     private RelativeLayout mLayoutAbout;
     private RelativeLayout mLayoutLanguage;
+    private RelativeLayout mLayoutNodeSetting;
 
     public static MainUserFragment newInstance() {
         Bundle args = new Bundle();
@@ -55,6 +56,7 @@ public class MainUserFragment extends BaseFragment implements View.OnClickListen
         mLayoutHelp.setClickable(true);
         mLayoutAbout.setClickable(true);
         mLayoutLanguage.setClickable(true);
+        mLayoutNodeSetting.setClickable(true);
     }
 
     @Override
@@ -63,15 +65,8 @@ public class MainUserFragment extends BaseFragment implements View.OnClickListen
             mLayoutManageWallet.setClickable(false);
             ManageWalletActivity.startModifyWalletActivity(getActivity());
         } else if (view == mLayoutRecordTransaction) {
-            WalletInfoManager.WData wallet = WalletInfoManager.getInstance().getCurrentWallet();
-            if (wallet.type == TBController.MOAC_INDEX) {
-                WebBrowserActivity.startWebBrowserActivity(getActivity(), getString(R.string.moac_browser), Constant.MOAC_BROWSER + wallet.waddress);
-            } else if (wallet.type == TBController.EOS_INDEX) {
-                WebBrowserActivity.startWebBrowserActivity(getActivity(), getString(R.string.eos_browser), Constant.EOS_BROWSER + wallet.waddress);
-            } else {
-                mLayoutRecordTransaction.setClickable(false);
-                TransactionRecordActivity.startTransactionRecordActivity(getActivity(), 2);
-            }
+            mLayoutRecordTransaction.setClickable(false);
+            TransactionRecordActivity.startTransactionRecordActivity(getActivity(), 2);
         } else if (view == mLayoutNotification) {
             mLayoutNotification.setClickable(false);
             TransactionRecordActivity.startTransactionRecordActivity(getActivity(), 1);
@@ -84,6 +79,9 @@ public class MainUserFragment extends BaseFragment implements View.OnClickListen
         } else if (view == mLayoutLanguage) {
             mLayoutLanguage.setClickable(false);
             LanguageActivity.startLanguageActivity(getActivity());
+        } else if (view == mLayoutNodeSetting){
+            mLayoutNodeSetting.setClickable(false);
+            NodeSettingActivity.startNodeSettingActivity(getActivity());
         }
     }
 
@@ -95,6 +93,7 @@ public class MainUserFragment extends BaseFragment implements View.OnClickListen
         mLayoutHelp = view.findViewById(R.id.layout_help);
         mLayoutAbout = view.findViewById(R.id.layout_about);
         mLayoutLanguage = view.findViewById(R.id.layout_language);
+        mLayoutNodeSetting = view.findViewById(R.id.layout_node_setting);
 
         mLayoutManageWallet.setOnClickListener(this);
         mLayoutRecordTransaction.setOnClickListener(this);
@@ -102,6 +101,7 @@ public class MainUserFragment extends BaseFragment implements View.OnClickListen
         mLayoutHelp.setOnClickListener(this);
         mLayoutAbout.setOnClickListener(this);
         mLayoutLanguage.setOnClickListener(this);
+        mLayoutNodeSetting.setOnClickListener(this);
     }
 
 }

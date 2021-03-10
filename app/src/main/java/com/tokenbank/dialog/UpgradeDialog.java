@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -12,10 +12,6 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.tokenbank.R;
-import com.tokenbank.config.AppConfig;
-import com.tokenbank.utils.ToastUtil;
-import com.tokenbank.utils.Util;
-
 
 
 public class UpgradeDialog extends BaseDialog {

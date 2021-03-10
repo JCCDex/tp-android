@@ -4,16 +4,13 @@ package com.tokenbank.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.jccdex.app.base.JCallback;
-import com.android.jccdex.app.jingtum.JingtumWallet;
-import com.android.jccdex.app.util.JCCJson;
 import com.tokenbank.R;
 import com.tokenbank.base.BaseWalletUtil;
 import com.tokenbank.base.TBController;
@@ -387,27 +384,27 @@ public class TokenTransferActivity extends BaseActivity implements View.OnClickL
         String num = mEdtTransferNum.getText().toString();
 
         if (TextUtils.isEmpty(mTvToken.getText().toString())) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_choose_token), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_choose_token), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (TextUtils.isEmpty(address)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_wallet_address), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_wallet_address), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
         if (TextUtils.equals(address, mWalletData.waddress)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_receive_address_incorrect), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_receive_address_incorrect), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
         if (!mWalletUtil.checkWalletAddress(address)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_address_format_incorrect), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_address_format_incorrect), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
 
         if ((TextUtils.isEmpty(num) || Util.parseDouble(num) <= 0.0f)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_amount_incorrect), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_amount_incorrect), getString(R.string.dialog_btn_confirm));
             return false;
         }
         return true;

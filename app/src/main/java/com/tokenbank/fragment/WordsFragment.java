@@ -2,7 +2,7 @@ package com.tokenbank.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -139,33 +139,33 @@ public class WordsFragment extends BaseFragment implements View.OnClickListener 
         String walletName = mEdtWalletName.getText().toString();
         boolean readedTerms = mImgboxTerms.isSelected();
         if (TextUtils.isEmpty(walletName)) {
-            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.enter_hint_wallet_name), "OK");
+            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.enter_hint_wallet_name), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (TextUtils.isEmpty(walletWords) || walletWords.split(" ") == null || walletWords.split(" ").length < 12) {
-            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_title_mnemonic_incorrect), "OK");
+            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_title_mnemonic_incorrect), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (TextUtils.isEmpty(walletPwd)) {
-            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_no_password), "OK");
+            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_no_password), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
         if (TextUtils.isEmpty(walletPwdRepeat)) {
-            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_no_verify_password), "OK");
+            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_no_verify_password), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
         if (!TextUtils.equals(walletPwdRepeat, walletPwd)) {
-            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_passwords_unmatch), "OK");
+            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_passwords_unmatch), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (walletPwd.length() < 8) {
-            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_short_password), "OK");
+            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_short_password), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (!readedTerms) {
-            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_no_read_service), "OK");
+            ViewUtil.showSysAlertDialog(getActivity(), getString(R.string.dialog_content_no_read_service), getString(R.string.dialog_btn_confirm));
             return false;
         }
         return true;

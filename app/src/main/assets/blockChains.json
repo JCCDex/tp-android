@@ -3,7 +3,7 @@
     {
       "hid": 1,
       "title": "以太坊",
-      "desc": "以太坊",
+      "desc": "ETH",
       "default_token": "eth",
       "url": "https://ethereum.org/",
       "status": 0,
@@ -13,7 +13,7 @@
     {
       "hid": 2,
       "title": "井通",
-      "desc": "井通",
+      "desc": "JINGTUM",
       "default_token": "swt",
       "url": "http://state.jingtum.com",
       "status": 0,
@@ -23,7 +23,7 @@
     {
       "hid": 3,
       "title": "墨客",
-      "desc": "墨客",
+      "desc": "MOAC",
       "default_token": "moac",
       "url": "https://www.moac.io/",
       "status": 0,

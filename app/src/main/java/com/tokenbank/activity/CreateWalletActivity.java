@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
@@ -159,7 +159,7 @@ public class CreateWalletActivity extends BaseActivity implements View.OnClickLi
 
     private boolean paramCheck() {
         if (mBlock == null) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_block), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_block), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
@@ -169,29 +169,29 @@ public class CreateWalletActivity extends BaseActivity implements View.OnClickLi
         boolean readedTerms = mImgServiceTerms.isSelected();
 
         if (TextUtils.isEmpty(walletName)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_wallet_name), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_wallet_name), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (TextUtils.isEmpty(walletPwd)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_password), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_password), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
         if (TextUtils.isEmpty(walletPwdRepeat)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_verify_password), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_verify_password), getString(R.string.dialog_btn_confirm));
             return false;
         }
 
         if (!TextUtils.equals(walletPwdRepeat, walletPwd)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_passwords_unmatch), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_passwords_unmatch), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (walletPwd.length() < 8) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_short_password), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_short_password), getString(R.string.dialog_btn_confirm));
             return false;
         }
         if (!readedTerms) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_read_service), "OK");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_read_service), getString(R.string.dialog_btn_confirm));
             return false;
         }
 

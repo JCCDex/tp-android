@@ -6,6 +6,8 @@ public class Constant {
     public final static String wallet_prefs_prefix = "wallet_pref_";
 
     public final static String wallet_def_file = "wallet_default_pref";
+    public final static String custom_node ="_customNode";
+    public final static String customNodeList ="customNodeList";
     public final static String wid = "wid";
     public final static String wtype = "wtype";
     public final static String wname = "wname";
@@ -72,6 +74,11 @@ public class Constant {
 
     public final static String EOS_ICON = "http://res.mobilecoinabcbene.nlren.cn/coinbene-upload/EOS.png";
     //abi data
+
+    public final static String CustomNodeName = "自定义节点";
+
+    //社区链节点地址(默认节点地址)
+    public static String fst_node = "http://101.200.174.239:7545";
 
     public final static String ABI_DATA = " [\n" +
             "        {\n" +

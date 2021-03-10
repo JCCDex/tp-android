@@ -172,7 +172,7 @@ public class ModifyWalletActivity extends BaseActivity implements View.OnClickLi
     private void saveWalletInfo() {
         String newWalletName = mEdtWalletName.getText().toString();
         if (TextUtils.isEmpty(newWalletName)) {
-            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_wallet_name), "Ok");
+            ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_content_no_wallet_name), getString(R.string.dialog_btn_confirm));
             return;
         }
         mWalletData.wname = newWalletName;

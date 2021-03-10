@@ -2,7 +2,7 @@ package com.tokenbank.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -11,7 +11,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.tokenbank.R;
-import com.tokenbank.base.TBController;
 import com.tokenbank.utils.TLog;
 import com.tokenbank.utils.Util;
 

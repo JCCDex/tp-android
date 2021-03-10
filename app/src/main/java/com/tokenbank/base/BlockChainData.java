@@ -17,8 +17,7 @@ public class BlockChainData {
 
     private static final String TAG = "BlockChainData";
     private static BlockChainData instance = new BlockChainData();
-    private List<Block> mBlock = new ArrayList<Block>();
-
+    private List<Block> mBlock = new ArrayList<>();
     private BlockChainData() {
 
     }
@@ -29,9 +28,7 @@ public class BlockChainData {
 
     public void init() {
         String data = FileUtil.getConfigFile(AppConfig.getContext(), "blockChains.json");
-
         GsonUtil json = new GsonUtil(data);
-
         GsonUtil chains = json.getArray("data", "[]");
         int len = chains.getLength();
         for (int i = 0; i < len; i++) {
@@ -40,7 +37,6 @@ public class BlockChainData {
                 mBlock.add(getBlock(item));
             }
         }
-
     }
 
     public static Block getBlock(GsonUtil json) {
@@ -73,6 +69,20 @@ public class BlockChainData {
             init();
         }
         return mBlock;
+    }
+
+    public String getDescByHid(long hid){
+        if(mBlock == null || mBlock.size() == 0) {
+            init();
+            return null;
+        }
+        int len = mBlock.size();
+        for(int i =0; i < len; i++) {
+            if(mBlock.get(i).hid == hid){
+                return mBlock.get(i).desc;
+            }
+        }
+        return null;
     }
 
     public Block getBolckByHid(long hid) {

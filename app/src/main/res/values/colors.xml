@@ -42,4 +42,10 @@
 
     <color name="color_detail_receive">#FF27B498</color>
     <color name="color_detail_send">#FFF55758</color>
+
+
+    <color name="color_split">#D5D2D2</color>
+    <color name="color_ping_quick">#04E00C</color>
+    <color name="color_ping_normal">#FF9800</color>
+    <color name="color_ping_low">#ffff0000</color>
 </resources>

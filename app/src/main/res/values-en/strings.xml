@@ -101,11 +101,13 @@
     <string name="toast_no_jintum_wallet">There is no Jintum, please create and scan it</string>
     <string name="toast_no_eth_wallet">There is no Eth, please create and scan it</string>
     <string name="dialog_title_reminder">Reminder</string>
+    <string name="dialog_readConfig_err">can`t read configuration file！</string>
     <string name="dialog_content_switch_jintum_wallet">The scanned address is Jintum address, but the current wallet is not Jintum wallet, whether to switch to Jintum wallet.</string>
     <string name="dialog_content_switch_eth_wallet">The scanned address is Eth address, but the current wallet is not Eth wallet, whether to switch to Eth wallet.</string>
     <string name="dialog_btn_not_switch">No</string>
     <string name="dialog_btn_switch">Yes</string>
     <string name="content_my_asset">My Asset</string>
+    <string name="toast_exists_node">The node already exists</string>
     <string name="content_read_service"><![CDATA[<font color=\'#565d67\'>I have read and agree to</font><font color=\'#2890FE\'>\ the Terms and Privacy Policy.</font>]]></string>
     <string name="titleBar_user_agreement">User Agreement</string>
     <string name="dialog_title_no_private_key">Enter your private key</string>
@@ -238,4 +240,28 @@
     <string name="sign_failed">sign failed</string>
     <string name="eos_browser">EOS explorer</string>
     <string name="picture_save_false">save picture false</string>
+    <string name="btn_add_node">create node</string>
+    <string name="toast_getBalance_err">Failed to get balance</string>
+    <string name="content_trading_waiting">waiting</string>
+    <string name="dialog_all_node_invalid">Some error happened,Please contact the administrator or set the available nodes by yourself.</string>
+    <string name="btn_create_wallet_fail">Failed to create wallet</string>
+    <string name="picture_save_success">save picture success</string>
+    <string name="wallet_import_false">import wallet false</string>
+    <string name="wallet_import_success">import wallet success</string>
+    <string name="sign_transation_false">sign transaction false</string>
+    <string name="sign_transation_success">sign transaction success</string>
+    <string name="dialog_node_warning">Node exception！</string>
+    <string name="dialog_btn_setting_node">Setting Node Now</string>
+    <string name="tv_err_node">Please enter a valid node address</string>
+    <string name="tv_custom_node">Custom Node</string>
+    <string name="title_SettingNode">Setting Node</string>
+    <string name="titleBar_select_import_way">Choose Import way</string>
+    <string name="toast_no_wallet">have no wallet,create one please</string>
+    <string name="transfer_speed_fast">fast</string>
+    <string name="transfer_speed_slow">slow</string>
+    <string name="btn_node_setting">Node Setting</string>
+    <string name="dialog_delete_node">delete node : %s ？</string>
+    <string name="toast_Confirm_exit">Confirm exit? Please try again</string>
+    <string name="toast_ConfirmNode_delete">The default node cannot be deleted！</string>
+    <string name="tip_max">max</string>
 </resources>

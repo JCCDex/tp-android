@@ -14,6 +14,7 @@ public class TBController {
     public final static int MOAC_INDEX = 3;
     public final static int EOS_INDEX = 4;
 
+
     private BaseWalletUtil mWalletUtil;
 
     private BaseWalletUtil mEosWalletUtil;
@@ -34,10 +35,10 @@ public class TBController {
     }
 
     public void init() {
-        mSupportType.add(ETH_INDEX);
-        mSupportType.add(SWT_INDEX);
-        mSupportType.add(MOAC_INDEX);
-        mSupportType.add(EOS_INDEX);
+        mSupportType.add(this.ETH_INDEX);
+        mSupportType.add(this.SWT_INDEX);
+        mSupportType.add(this.MOAC_INDEX);
+        mSupportType.add(this.EOS_INDEX);
 
         mEosWalletUtil = new EOSWalletBlockchain();
         mEosWalletUtil.init();
@@ -55,13 +56,13 @@ public class TBController {
     }
 
     public BaseWalletUtil getWalletUtil(int type) {
-        if (type == ETH_INDEX) {
+        if (type == this.ETH_INDEX) {
             mWalletUtil = mEthWalletUtil;
-        } else if (type == SWT_INDEX) {
+        } else if (type == this.SWT_INDEX) {
             mWalletUtil = mSwtWalletUtil;
-        } else if (type == MOAC_INDEX) {
+        } else if (type == this.MOAC_INDEX) {
             mWalletUtil = mMoacWalletUtil;
-        } else if (type == EOS_INDEX) {
+        } else if (type == this.EOS_INDEX) {
             mWalletUtil = mEosWalletUtil;
         } else {
             mWalletUtil = mNullWalletUtil;// do nothing

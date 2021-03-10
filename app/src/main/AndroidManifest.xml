@@ -108,6 +108,9 @@
             android:name=".activity.ChooseTokenTransferActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activity.NodeSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.LanguageActivity"
             android:screenOrientation="portrait" />
         <activity
