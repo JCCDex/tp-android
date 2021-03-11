@@ -1,13 +1,11 @@
 package com.tokenbank.dialog;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,15 +15,7 @@ import android.widget.TextView;
 
 import com.tokenbank.R;
 import com.tokenbank.base.BlockNodeData;
-import com.tokenbank.config.AppConfig;
 import com.tokenbank.utils.ToastUtil;
-import com.tokenbank.utils.ViewUtil;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.mob.tools.utils.Strings.getString;
 
 /**
  * 自定义节点Dialog
@@ -112,8 +102,8 @@ public class NodeCustomDialog extends BaseDialog implements View.OnClickListener
                     node.url = url;
                     node.nodeName = "自定义节点";
                     node.isSelect = -1;
-                    node.isConfigNode = BlockNodeData.CUSTOM;
-                    if(BlockNodeData.getInstance().addCustomNode(node)){
+                    node.isConfigNode = BlockNodeData.LOCAL;
+                    if(BlockNodeData.getInstance().addNode(node)){
                         mOnConfirmOrderListener.onConfirmOrder();
                     } else {
                         ToastUtil.toast(getContext(), getContext().getString(R.string.toast_exists_node));

@@ -6,8 +6,8 @@ public class Constant {
     public final static String wallet_prefs_prefix = "wallet_pref_";
 
     public final static String wallet_def_file = "wallet_default_pref";
-    public final static String custom_node ="_customNode";
-    public final static String customNodeList ="customNodeList";
+    public final static String _node ="_Node";
+    public final static String NodeList ="NodeList";
     public final static String wid = "wid";
     public final static String wtype = "wtype";
     public final static String wname = "wname";

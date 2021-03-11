@@ -20,10 +20,10 @@ public class BlockNodeData {
     private static final String TAG = "BlockNodeData";
     private String desc ;
     private static BlockNodeData instance;
-    private List<Node> PublicNode = new ArrayList<>(); //系统默认列点列表    通过配置文件获取
-    private List<Node> CustomNode = new ArrayList<>(); //用户自定义节点列表    通过sp存储获取 根据节点的不同也要分别存储。
+    private List<Node> mNodeList = new ArrayList<>(); //系统默认列点列表    通过配置文件获取
+    private List<Node> LocalNodeList = new ArrayList<>(); //本地节点列表 包含用户节点    通过sp存储获取
     public static final int PUBLIC = 0;
-    public static final int CUSTOM = 1;
+    public static final int LOCAL = 1;
     private BlockNodeData() {
     }
 
@@ -34,43 +34,53 @@ public class BlockNodeData {
         return instance;
     }
 
-
     public void init(){
         //初始化时根据当前钱包类型切换节点列表，每次切换钱包时重新初始化
         desc = BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType());
-        String publicNodes = FileUtil.getConfigFile(AppConfig.getContext(), "publicNode.json");
-        PublicNode = toNodeList(publicNodes,PUBLIC);
-
-        String customNodes = FileUtil.getStringFromSp(AppConfig.getContext(), Constant.custom_node, Constant.customNodeList);
-        CustomNode = toNodeList(customNodes,CUSTOM);
-        PublicNode.addAll(CustomNode);
+        String customNodes = FileUtil.getStringFromSp(AppConfig.getContext(), Constant._node, Constant.NodeList);
+        LocalNodeList = toNodeList(customNodes);
+        // 无本地存储时从配置文件读取
+        if(LocalNodeList == null || LocalNodeList.size() == 0){
+            String publicNodes = FileUtil.getConfigFile(AppConfig.getContext(), "publicNode.json");
+            mNodeList = toNodeList(publicNodes);
+        } else {
+            mNodeList.addAll(LocalNodeList);
+        }
     }
 
     public List<Node> getNodeList(){
-        if (PublicNode == null || PublicNode.size() == 0) {
+        if (mNodeList == null || mNodeList.size() == 0) {
             Log.e(TAG, "getPublicNodeList: 读取配置文件失败");
             init();
             return null;
         }
-        return PublicNode;
+        return mNodeList;
     }
 
-    public boolean addCustomNode(Node node){
-        for (Node item : CustomNode) {
+    public Node getNode(){
+        for (Node node : mNodeList) {
+            if(node.isSelect == 1){
+                return node;
+            }
+        }
+        return null;
+    }
+
+
+    public boolean addNode(Node node){
+        for (Node item : mNodeList) {
             if(node.url.equals(item.url)){
                 return false;
             }
         }
-        CustomNode.add(node);
-        PublicNode.add(node);
-        saveCustomNodeToSp();
+        mNodeList.add(node);
+        saveNodeToSp();
         return true;
     }
 
-    public void deleteNodeList(Node node){
-        PublicNode.remove(node);
-        CustomNode.remove(node);
-        saveCustomNodeToSp();
+    public void deleteNode(Node node){
+        mNodeList.remove(node);
+        saveNodeToSp();
     }
 
     private GsonUtil toJson(List<Node> nodes){
@@ -82,12 +92,12 @@ public class BlockNodeData {
             node.putString("url",item.url);
             node.putInt("isSelect",item.isSelect);
             node.putInt("isConfigNode",item.isConfigNode);
-            data.put(desc,node);
+            data.put(node);
         }
         return data;
     }
 
-    private List<Node> toNodeList(String JsonStr,int flag) {
+    private List<Node> toNodeList(String JsonStr) {
         List<Node> NodeList = new ArrayList<>();
         GsonUtil json = new GsonUtil(JsonStr);
         GsonUtil data = json.getArray("data","");
@@ -103,7 +113,7 @@ public class BlockNodeData {
                             node.isSelect = nodeLit.getInt("isSelect",-1);
                             node.nodeName = nodeLit.getString("name","");
                             node.url = nodeLit.getString("url","");
-                            node.isConfigNode = flag;
+                            node.isConfigNode = nodeLit.getInt("isConfigNode",PUBLIC);
                             NodeList.add(node);
                         }
                     }
@@ -113,13 +123,16 @@ public class BlockNodeData {
         return NodeList;
     }
 
-    public void saveCustomNodeToSp(){
-        //保存的逻辑为全部删除后重新保存
+    public void saveNodeToSp(){
+        //保存的逻辑为覆盖保存
         GsonUtil json = new GsonUtil("{}");
-        GsonUtil data = json.getArray("data","");
-        data.put(toJson(CustomNode));
+        GsonUtil data = new GsonUtil("[]");
+        GsonUtil item = new GsonUtil("{}");
+        item.put(desc,toJson(mNodeList));
+        data.put(item);
         json.put("data",data);
-        FileUtil.putStringToSp(AppConfig.getContext(), Constant.custom_node, Constant.customNodeList, json.toString());
+        Log.d(TAG, "saveNodeToSp: "+json);
+        FileUtil.putStringToSp(AppConfig.getContext(), Constant._node, Constant.NodeList, json.toString());
     }
 
     public static class Node implements Parcelable{

@@ -11,8 +11,6 @@ import com.tokenbank.utils.GsonUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class BlockChainData {
 
     private static final String TAG = "BlockChainData";

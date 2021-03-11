@@ -20,29 +20,21 @@ import android.widget.TextView;
 
 
 import com.scwang.smartrefresh.layout.internal.ProgressDrawable;
-import com.stealthcopter.networktools.Ping;
-import com.stealthcopter.networktools.PortScan;
-import com.stealthcopter.networktools.ping.PingResult;
-import com.stealthcopter.networktools.ping.PingStats;
 import com.tokenbank.R;
 import com.tokenbank.base.BlockNodeData;
+import com.tokenbank.base.NodeCheckUtil;
 import com.tokenbank.dialog.NodeCustomDialog;
 import com.tokenbank.utils.ToastUtil;
 import com.tokenbank.utils.ViewUtil;
 import com.tokenbank.view.TitleBar;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * 节点设置
@@ -61,6 +53,7 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     private Button mBtnAddNode;
     private static CompositeDisposable compositeDisposable;
     private final static BigDecimal PING_QUICK = new BigDecimal("60");
+    private final static BigDecimal PING_ZERO = new BigDecimal("01");
     private final static BigDecimal PING_LOW = new BigDecimal("100");
 
     @Override
@@ -95,30 +88,29 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_node_setting :
-                new NodeCustomDialog(NodeSettingActivity.this, new NodeCustomDialog.onConfirmOrderListener() {
-                    @Override
-                    public void onConfirmOrder() {
-                        getPublicNode();
-                    }
-                }).show();
-                break;
-        }
+        new NodeCustomDialog(NodeSettingActivity.this, new NodeCustomDialog.onConfirmOrderListener() {
+            @Override
+            public void onConfirmOrder() {
+                getPublicNode();
+            }
+        }).show();
     }
 
     @Override
     public void onLeftClick(View view) {
+        saveNode();
         this.finish();
     }
 
     @Override
     public void onRightClick(View view) {
+        saveNode();
         this.finish();
     }
 
     @Override
     public void onMiddleClick(View view) {
+        saveNode();
         this.finish();
     }
 
@@ -167,7 +159,9 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
                             vh.mRadioSelected.setChecked(false);
                             vh.mLayoutItem.setActivated(false);
                             publicNodes.get(mSelectedItem).isSelect = NOT_SELECT;
+                            Log.d(TAG, "onClick: "+publicNodes.get(mSelectedItem).nodeName +"isSelect = 0");
                             publicNodes.get(position).isSelect = SELECT;
+                            Log.d(TAG, "onClick: "+publicNodes.get(position).nodeName +"isSelect = 1");
                             mSelectedItem = position;
                             vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
                             vh.mRadioSelected.setChecked(true);
@@ -233,84 +227,56 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
                 mSelectedItem = position;
             }
             holder.mTvNodeName.setText(item.nodeName);
-            String url = item.url;
-            holder.mTvNodeUrl.setText(url);
+            holder.mTvNodeUrl.setText(item.url);
             holder.mProgressDrawable.start();
-            String[] ws = url.replace("http://", "").replace("https://", "").split(":");
-            if (ws.length != 2) {
-                return;
-            }
-            String host = ws[0];
-            String port = ws[1];
-            Observable.create((ObservableOnSubscribe<String>) emitter -> {
-                ArrayList<Integer> prots = PortScan.onAddress(host).setMethodTCP().setPort(Integer.valueOf(port)).doScan();
-                if (prots != null && prots.size() == 1) {
-                    Ping ping = Ping.onAddress(host);
-                    ping.setTimeOutMillis(1000);
-                    ping.setTimes(5);
-                    ping.doPing(new Ping.PingListener() {
+            NodeCheckUtil.checkNode(item.url, new Observer<String>() {
                         @Override
-                        public void onResult(PingResult pingResult) {
+                        public void onSubscribe(Disposable d) {
+                            compositeDisposable.add(d);
+                        }
+                        @Override
+                        public void onNext(String ping) {
+                            holder.mTvNodePing.setText(ping + "ms");
+                            BigDecimal pingBig = new BigDecimal(ping);
+                            if(pingBig.compareTo(PING_ZERO) == -1){
+                                holder.mLayoutItem.setClickable(false);
+                                holder.mRadioSelected.setEnabled(false);
+                                holder.mTvNodePing.setText("---");
+                                holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_low));
+                            }
+                            if (pingBig.compareTo(PING_QUICK) == -1 && pingBig.compareTo(PING_ZERO) == 1) {
+                                holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_quick));
+                            } else if (pingBig.compareTo(PING_LOW) == -1) {
+                                holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_normal));
+                            } else {
+                                holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_low));
+                            }
+                            holder.mTvNodePing.setVisibility(View.VISIBLE);
+                            holder.mImgLoad.setVisibility(View.GONE);
+                            holder.mProgressDrawable.stop();
+                        }
+                        @Override
+                        public void onError(Throwable e) {
+                            holder.mLayoutItem.setClickable(false);
+                            holder.mRadioSelected.setEnabled(false);
+                            holder.mTvNodePing.setText("---");
+                            holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_low));
+                            holder.mTvNodePing.setVisibility(View.VISIBLE);
+                            holder.mImgLoad.setVisibility(View.GONE);
+                            holder.mProgressDrawable.stop();
+                            //最后一条也错误时，有可能全部节点不可用
+                            if(getItemCount() == position +1){
+                                if(!isFinishing()){
+                                    checkAllNodeStatus();
+                                }
+                            }
                         }
 
                         @Override
-                        public void onFinished(PingStats pingStats) {
-                            String ping = String.format("%.2f", pingStats.getAverageTimeTaken());
-                            emitter.onNext(ping);
-                            emitter.onComplete();
-                        }
+                        public void onComplete() {
 
-                        @Override
-                        public void onError(Exception e) {
                         }
                     });
-                } else {
-                    if (!emitter.isDisposed()) {
-                        emitter.onError(new Throwable());
-                    }
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<String>() {
-                @Override
-                public void onSubscribe(Disposable d) {
-                    compositeDisposable.add(d);
-                }
-                @Override
-                public void onNext(String ping) {
-                    holder.mTvNodePing.setText(ping + "ms");
-                    BigDecimal pingBig = new BigDecimal(ping);
-                    if (pingBig.compareTo(PING_QUICK) == -1) {
-                        holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_quick));
-                    } else if (pingBig.compareTo(PING_LOW) == -1) {
-                        holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_normal));
-                    } else {
-                        holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_low));
-                    }
-                    holder.mTvNodePing.setVisibility(View.VISIBLE);
-                    holder.mImgLoad.setVisibility(View.GONE);
-                    holder.mProgressDrawable.stop();
-                }
-                @Override
-                public void onError(Throwable e) {
-                    holder.mLayoutItem.setClickable(false);
-                    holder.mRadioSelected.setEnabled(false);
-                    holder.mTvNodePing.setText("---");
-                    holder.mTvNodePing.setTextColor(getResources().getColor(R.color.color_ping_low));
-                    holder.mTvNodePing.setVisibility(View.VISIBLE);
-                    holder.mImgLoad.setVisibility(View.GONE);
-                    holder.mProgressDrawable.stop();
-                    //最后一条也错误时，有可能全部节点不可用
-                    if(getItemCount() == position +1){
-                        if(!isFinishing()){
-                            checkAllNodeStatus();
-                        }
-                    }
-                }
-
-                @Override
-                public void onComplete() {
-
-                }
-            });
         }
         @Override
         public long getItemId(int position) {
@@ -338,19 +304,24 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
      * 删除节点
      */
     private void DeleteNode(BlockNodeData.Node node) {
-        if(node.isSelect == SELECT){
-            NodeRecordAdapter.VH vh = (NodeRecordAdapter.VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
-            vh.mRadioSelected.setChecked(false);
-            vh.mLayoutItem.setActivated(false);
-            mSelectedItem--;
-            publicNodes.get(mSelectedItem).isSelect =SELECT;
-        }
+        Log.d(TAG, "DeleteNode: "+node.isConfigNode);
         if(node.isConfigNode == BlockNodeData.PUBLIC){
             ToastUtil.toast(NodeSettingActivity.this, getString(R.string.toast_ConfirmNode_delete));
         } else {
-            BlockNodeData.getInstance().deleteNodeList(node);
+            if (node.isSelect == SELECT) {
+                NodeRecordAdapter.VH vh = (NodeRecordAdapter.VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
+                vh.mRadioSelected.setChecked(false);
+                vh.mLayoutItem.setActivated(false);
+                mSelectedItem--;
+                publicNodes.get(mSelectedItem).isSelect = SELECT;
+            }
+            BlockNodeData.getInstance().deleteNode(node);
             getPublicNode();
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void saveNode(){
+        BlockNodeData.getInstance().saveNodeToSp();
     }
 }
