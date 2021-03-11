@@ -243,7 +243,7 @@
     <string name="btn_add_node">create node</string>
     <string name="toast_getBalance_err">Failed to get balance</string>
     <string name="content_trading_waiting">waiting</string>
-    <string name="dialog_all_node_invalid">Some error happened,Please contact the administrator or set the available nodes by yourself.</string>
+    <string name="dialog_all_node_invalid">all node invalid.</string>
     <string name="btn_create_wallet_fail">Failed to create wallet</string>
     <string name="picture_save_success">save picture success</string>
     <string name="wallet_import_false">import wallet false</string>

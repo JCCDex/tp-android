@@ -54,7 +54,9 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     private TitleBar mTitleBar;
     private RecyclerView mNodeRecyclerView;
     private int mSelectedItem = -1;
-    private List<BlockNodeData.Node> publicNodes = new ArrayList<>();
+    private List<BlockNodeData.Node> publicNodes;
+    private int SELECT = 1;
+    private int NOT_SELECT = 0;
     private NodeRecordAdapter mAdapter;
     private Button mBtnAddNode;
     private static CompositeDisposable compositeDisposable;
@@ -85,13 +87,10 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
         mNodeRecyclerView.setAdapter(mAdapter);
         compositeDisposable = new CompositeDisposable();
         getPublicNode();
-        checkAllNodeStatus();
     }
 
     private void checkAllNodeStatus() {
-        if(publicNodes == null || publicNodes.size() <0){
             ViewUtil.showSysAlertDialog(this, getString(R.string.dialog_all_node_invalid), getString(R.string.dialog_btn_confirm));
-        }
     }
 
     @Override
@@ -167,21 +166,10 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
                             //切换
                             vh.mRadioSelected.setChecked(false);
                             vh.mLayoutItem.setActivated(false);
+                            publicNodes.get(mSelectedItem).isSelect = NOT_SELECT;
+                            publicNodes.get(position).isSelect = SELECT;
                             mSelectedItem = position;
-                            BlockNodeData.Node item = publicNodes.get(mSelectedItem);
-                            item.position = mSelectedItem;
                             vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
-                            vh.mRadioSelected.setChecked(true);
-                            vh.mLayoutItem.setActivated(true);
-                        } else {
-                            //vh == null
-                            if (mSelectedItem != -1) {
-                                notifyItemChanged(mSelectedItem);
-                            }
-                            mSelectedItem = position;
-                            BlockNodeData.Node item = publicNodes.get(mSelectedItem);
-                            item.position = mSelectedItem;
-                            vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(position);
                             vh.mRadioSelected.setChecked(true);
                             vh.mLayoutItem.setActivated(true);
                         }
@@ -227,14 +215,19 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
             BlockNodeData.Node item = publicNodes.get(position);
-            if(position == 0 && item.position == -1){
-                item.position = position;
-                //当前 url
-                holder.mRadioSelected.setChecked(true);
-                holder.mLayoutItem.setActivated(true);
-                mSelectedItem = position;
+            // Node对象中position 未初始化,说明第一次加载 默认第一位选择
+            if(item.isSelect == -1){
+                if(position == 0){
+                    item.isSelect = SELECT;
+                    holder.mRadioSelected.setChecked(true);
+                    holder.mLayoutItem.setActivated(true);
+                    mSelectedItem = position;
+                } else {
+                    item.isSelect = NOT_SELECT;
+                }
             }
-            if(item.position!= -1 && item.position == position){
+            // Node对象中position 初始化了, 必定有项目已经选择
+            if(item.isSelect != -1 && item.isSelect == SELECT ){
                 holder.mRadioSelected.setChecked(true);
                 holder.mLayoutItem.setActivated(true);
                 mSelectedItem = position;
@@ -242,7 +235,6 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
             holder.mTvNodeName.setText(item.nodeName);
             String url = item.url;
             holder.mTvNodeUrl.setText(url);
-
             holder.mProgressDrawable.start();
             String[] ws = url.replace("http://", "").replace("https://", "").split(":");
             if (ws.length != 2) {
@@ -332,41 +324,31 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     }
 
     /**
-     * 从配置文件读取 默认节点列表
+     * 读取节点列表
      */
     private void getPublicNode() {
-        publicNodes.clear();
-        List<BlockNodeData.Node> list = BlockNodeData.getInstance().getPublicNodeList();
-        if(list != null && list.size() != 0){
-            publicNodes.addAll(list);
-            getCustomNode();
-        } else {
+        publicNodes = BlockNodeData.getInstance().getNodeList();
+        if(publicNodes == null || publicNodes.size() == 0){
             this.finish();
         }
-    }
-    /**
-     * 从本地读取用户节点列表
-     */
-    private void getCustomNode() {
-        List<BlockNodeData.Node> list = BlockNodeData.getInstance().getCustomNodeList();
-        if(list != null && list.size() != 0){
-            publicNodes.addAll(list);
-            if (mAdapter != null) {
-                mAdapter.notifyDataSetChanged();
-            }
-        } else {
-            return;
-        }
+        mAdapter.notifyDataSetChanged();
     }
 
     /**
      * 删除节点
      */
     private void DeleteNode(BlockNodeData.Node node) {
+        if(node.isSelect == SELECT){
+            NodeRecordAdapter.VH vh = (NodeRecordAdapter.VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
+            vh.mRadioSelected.setChecked(false);
+            vh.mLayoutItem.setActivated(false);
+            mSelectedItem--;
+            publicNodes.get(mSelectedItem).isSelect =SELECT;
+        }
         if(node.isConfigNode == BlockNodeData.PUBLIC){
             ToastUtil.toast(NodeSettingActivity.this, getString(R.string.toast_ConfirmNode_delete));
         } else {
-            BlockNodeData.getInstance().deleteCustomNode(node);
+            BlockNodeData.getInstance().deleteNodeList(node);
             getPublicNode();
             mAdapter.notifyDataSetChanged();
         }

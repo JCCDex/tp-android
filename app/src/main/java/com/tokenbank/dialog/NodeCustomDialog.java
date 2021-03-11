@@ -111,8 +111,7 @@ public class NodeCustomDialog extends BaseDialog implements View.OnClickListener
                     BlockNodeData.Node node = new BlockNodeData.Node();
                     node.url = url;
                     node.nodeName = "自定义节点";
-                    node.position = -1;
-                    node.isSelect = 0;
+                    node.isSelect = -1;
                     node.isConfigNode = BlockNodeData.CUSTOM;
                     if(BlockNodeData.getInstance().addCustomNode(node)){
                         mOnConfirmOrderListener.onConfirmOrder();

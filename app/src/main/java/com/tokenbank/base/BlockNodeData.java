@@ -43,23 +43,16 @@ public class BlockNodeData {
 
         String customNodes = FileUtil.getStringFromSp(AppConfig.getContext(), Constant.custom_node, Constant.customNodeList);
         CustomNode = toNodeList(customNodes,CUSTOM);
+        PublicNode.addAll(CustomNode);
     }
 
-    public List<Node> getPublicNodeList(){
+    public List<Node> getNodeList(){
         if (PublicNode == null || PublicNode.size() == 0) {
             Log.e(TAG, "getPublicNodeList: 读取配置文件失败");
             init();
             return null;
         }
         return PublicNode;
-    }
-
-    public List<Node> getCustomNodeList(){
-        if (CustomNode == null || CustomNode.size() == 0) {
-            init();
-            return null;
-        }
-        return CustomNode;
     }
 
     public boolean addCustomNode(Node node){
@@ -69,11 +62,13 @@ public class BlockNodeData {
             }
         }
         CustomNode.add(node);
+        PublicNode.add(node);
         saveCustomNodeToSp();
         return true;
     }
 
-    public void deleteCustomNode(Node node){
+    public void deleteNodeList(Node node){
+        PublicNode.remove(node);
         CustomNode.remove(node);
         saveCustomNodeToSp();
     }
@@ -85,7 +80,6 @@ public class BlockNodeData {
             GsonUtil node = new GsonUtil("{}");
             node.putString("name",item.nodeName);
             node.putString("url",item.url);
-            node.putInt("position",item.position);
             node.putInt("isSelect",item.isSelect);
             node.putInt("isConfigNode",item.isConfigNode);
             data.put(desc,node);
@@ -106,8 +100,7 @@ public class BlockNodeData {
                         for (int j = 0; j < nodes.getLength(); j++) {
                             GsonUtil nodeLit = nodes.getObject(j, "{}");
                             Node node = new Node();
-                            node.position = nodeLit.getInt("isSelect",1);
-                            node.isSelect = nodeLit.getInt("position",-1);
+                            node.isSelect = nodeLit.getInt("isSelect",-1);
                             node.nodeName = nodeLit.getString("name","");
                             node.url = nodeLit.getString("url","");
                             node.isConfigNode = flag;
@@ -122,14 +115,17 @@ public class BlockNodeData {
 
     public void saveCustomNodeToSp(){
         //保存的逻辑为全部删除后重新保存
-        FileUtil.putStringToSp(AppConfig.getContext(), Constant.custom_node, Constant.customNodeList, toJson(CustomNode).toString());
+        GsonUtil json = new GsonUtil("{}");
+        GsonUtil data = json.getArray("data","");
+        data.put(toJson(CustomNode));
+        json.put("data",data);
+        FileUtil.putStringToSp(AppConfig.getContext(), Constant.custom_node, Constant.customNodeList, json.toString());
     }
 
     public static class Node implements Parcelable{
         public String nodeName;
         public String url;
-        public int position; // 默认-1    初始化后 0,1,2,3,4,5 被选择的item序列
-        public int isSelect; // 默认 0 未选择    1 被选择
+        public int isSelect; // 未初始化-1  初始化后   0 未选择    1 被选择
         public int isConfigNode; // 0 为系统设定节点 ，1为用户自定义节点
 
         public Node() {
@@ -147,11 +143,10 @@ public class BlockNodeData {
             }
             Node node = (Node) obj;
             return TextUtils.equals(node.nodeName, this.nodeName) && TextUtils.equals(node.url, this.url) &&
-                    node.isSelect == this.isSelect && node.position == this.position && node.isConfigNode == this.isConfigNode;
+                    node.isSelect == this.isSelect && node.isConfigNode == this.isConfigNode;
         }
 
         protected Node(Parcel in) {
-            this.position = in.readInt();
             this.isSelect = in.readInt();
             this.nodeName = in.readString();
             this.url = in.readString();
@@ -171,7 +166,6 @@ public class BlockNodeData {
         };
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(this.position);
             dest.writeString(this.nodeName);
             dest.writeString(this.url);
             dest.writeInt(this.isSelect);

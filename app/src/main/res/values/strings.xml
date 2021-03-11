@@ -253,7 +253,7 @@
     <string name="toast_no_wallet">当前没有钱包，请创建钱包，再扫描</string>
     <string name="transfer_speed_fast">更快</string>
     <string name="transfer_speed_slow">更慢</string>
-    <string name="dialog_all_node_invalid">发生了一些错误，请联系管理员或者自行设置可用节点。</string>
+    <string name="dialog_all_node_invalid">无可用节点。</string>
     <string name="btn_node_setting">节点设置</string>
     <string name="tv_custom_node">自定义节点</string>
     <string name="tv_err_node">请输入合法的节点地址</string>
