@@ -18,12 +18,12 @@ import java.util.List;
  */
 public class BlockNodeData {
     private static final String TAG = "BlockNodeData";
-    private String desc ;
-    private static BlockNodeData instance;
     private List<Node> mNodeList = new ArrayList<>(); //系统默认列点列表    通过配置文件获取
     private List<Node> LocalNodeList = new ArrayList<>(); //本地节点列表 包含用户节点    通过sp存储获取
+    private static BlockNodeData instance;
     public static final int PUBLIC = 0;
     public static final int LOCAL = 1;
+    private String desc ;
     private BlockNodeData() {
     }
 

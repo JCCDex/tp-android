@@ -28,6 +28,11 @@ public class DappFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        //TODO 从配置文件初始化 Dapp的URL列表,然后初始化View
+        //TODO 获取点击事件来进行url跳转到webView
+        
+        //TODO 针对浏览器进行UI开发
         View view = inflater.inflate(R.layout.fragment_dapp, container, false);
         mEt_url = view.findViewById(R.id.et_url);
         mEt_url.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -73,6 +78,14 @@ public class DappFragment extends BaseFragment {
             }
         }
     }
+
+
+    private class AppInfo {
+        private String url;
+        private String symbolUrl;
+        private String desc;
+    }
+
 }
 
 

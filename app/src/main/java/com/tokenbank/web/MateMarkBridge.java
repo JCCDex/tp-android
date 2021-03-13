@@ -103,13 +103,27 @@ public class MateMarkBridge {
             case "eth_requestAccounts":
                 notifySuccessResult(mCurrentWallet.waddress,callbackId);
                 break;
-            case "eth_getEncryptionPublicKey":break;
-            case "eth_signTypedData":break;
-            case "eth_signTypedData_v3":break;
-            case "eth_signTypedData_v4":break;
-            case "wallet_getPermissions":break;
-            case "wallet_requestPermissions":break;
-            case "eth_call":break;
+            case "eth_getEncryptionPublicKey":
+
+                break;
+            case "eth_signTypedData":
+
+                break;
+            case "eth_signTypedData_v3":
+
+                break;
+            case "eth_signTypedData_v4":
+
+                break;
+            case "wallet_getPermissions":
+
+                break;
+            case "wallet_requestPermissions":
+
+                break;
+            case "eth_call":
+
+                break;
             case "eth_getBalance":
                 AppConfig.postOnUiThread(new Runnable() {
                     @Override
@@ -125,11 +139,14 @@ public class MateMarkBridge {
                     }
                 });
                 break;
-            case "eth_estimateGas":break;
+            case "eth_estimateGas":
+
+                break;
             case "eth_sendTransaction":
                 Log.d(TAG, "callHandler: "+params);
                 final GsonUtil TransactionParam = new GsonUtil(params);
                 TransactionParam.putString("secret",mCurrentWallet.wpk);
+                //这个丑东西怎么处理掉
                 AppConfig.postOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -150,10 +167,12 @@ public class MateMarkBridge {
                                                                 String hash = extra.getString("hash","");
                                                                 notifySuccessResult(hash,callbackId);
                                                             } else {
-                                                                notifyFailedResult(extra.getString("err",""),callbackId);
+                                                                notifyFailedResult(extra.getString("err","sendTransaction failed"),callbackId);
                                                             }
                                                         }
                                                     });
+                                                } else{
+                                                    notifyFailedResult(extra.getString("err","sign failed"),callbackId);
                                                 }
                                             }
                                         });
@@ -183,7 +202,8 @@ public class MateMarkBridge {
                 //TODO 添加成功后返回 boolean
                 notifySuccessResult("true",callbackId);
                 break;
-            case "wallet_addEthereumChain":break;
+            case "wallet_addEthereumChain":
+                break;
             case "personal_sign":break;
             default:
                 Log.e(TAG, "callHandler: no such method : "+methodName);
