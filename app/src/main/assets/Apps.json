@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "dapp_name": "威链交易所",
+      "dapp_url": "https://app.weidex.vip/?utm_source=tokenpocket",
+      "desc":"JINGTUM",
+      "support": "tp",
+      "icin_url" : ""
+    },
+    {
+      "dapp_name": "井创SWTC红包DAPP",
+      "dapp_url": "https://candy.jcdtech.cn/?utm_source=tokenpocket",
+      "desc":"JINGTUM",
+      "support": "tp",
+      "icin_url" : ""
+    },
+    {
+      "dapp_name": "MetaMaskTestDAPP",
+      "dapp_url": "https://metamask.github.io/test-dapp/?utm_source=tokenpocket",
+      "desc":"ETH",
+      "support": "MetaMask",
+      "icin_url" : ""
+    }
+  ]
+}

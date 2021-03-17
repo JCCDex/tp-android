@@ -121,82 +121,6 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     }
 
     class NodeRecordAdapter extends RecyclerView.Adapter<NodeRecordAdapter.VH>{
-        /**
-         * init view
-         */
-        class VH extends RecyclerView.ViewHolder {
-            RelativeLayout mLayoutItem;
-            TextView mTvNodeUrl;
-            TextView mTvNodeName;
-            TextView mTvNodePing;
-            ImageView mImgLoad;
-            RadioButton mRadioSelected;
-            ProgressDrawable mProgressDrawable;
-            public VH(View itemView) {
-                super(itemView);
-                //设置栏目样式
-                mLayoutItem = itemView.findViewById(R.id.layout_item);
-                mTvNodeUrl = itemView.findViewById(R.id.tv_node_url);
-                mTvNodeName = itemView.findViewById(R.id.tv_node_name);
-                mTvNodePing = itemView.findViewById(R.id.tv_ping);
-                mImgLoad = itemView.findViewById(R.id.img_ping);
-                mRadioSelected = itemView.findViewById(R.id.radio_selected);
-                mProgressDrawable = new ProgressDrawable();
-                mProgressDrawable.setColor(0xff666666);
-                mImgLoad.setImageDrawable(mProgressDrawable);
-                mRadioSelected.setClickable(false);
-
-                mLayoutItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        VH vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
-                        int position = getAdapterPosition();
-                        //重复点击
-                        if (position == mSelectedItem) {
-                            return;
-                        } else if (position != mSelectedItem && vh != null) {
-                            //切换
-                            vh.mRadioSelected.setChecked(false);
-                            vh.mLayoutItem.setActivated(false);
-                            publicNodes.get(mSelectedItem).isSelect = NOT_SELECT;
-                            Log.d(TAG, "onClick: "+publicNodes.get(mSelectedItem).nodeName +"isSelect = 0");
-                            publicNodes.get(position).isSelect = SELECT;
-                            Log.d(TAG, "onClick: "+publicNodes.get(position).nodeName +"isSelect = 1");
-                            mSelectedItem = position;
-                            vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
-                            vh.mRadioSelected.setChecked(true);
-                            vh.mLayoutItem.setActivated(true);
-                        }
-                    }
-                });
-                mLayoutItem.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        //定义AlertDialog.Builder对象，当长按列表项的时候弹出确认删除对话框
-                        AlertDialog.Builder builder=new AlertDialog.Builder(NodeSettingActivity.this);
-                        BlockNodeData.Node item = publicNodes.get(getAdapterPosition());
-                        builder.setMessage(getString(R.string.dialog_delete_node,item.url));
-                        builder.setTitle(getString(R.string.dialog_title_reminder));
-                        //添加AlertDialog.Builder对象的setPositiveButton()方法
-                        builder.setPositiveButton(getString(R.string.dialog_btn_confirm), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                DeleteNode(item);
-                            }
-                        });
-                        //添加AlertDialog.Builder对象的setNegativeButton()方法
-                        builder.setNegativeButton(getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        builder.create().show();
-                        return true;
-                    }
-                });
-            }
-        }
-
         @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = ViewUtil.inflatView(parent.getContext(), parent, R.layout.layout_item_node, false);
@@ -286,6 +210,82 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
         @Override
         public int getItemCount() {
             return publicNodes.size();
+        }
+
+        /**
+         * init view
+         */
+        class VH extends RecyclerView.ViewHolder {
+            RelativeLayout mLayoutItem;
+            TextView mTvNodeUrl;
+            TextView mTvNodeName;
+            TextView mTvNodePing;
+            ImageView mImgLoad;
+            RadioButton mRadioSelected;
+            ProgressDrawable mProgressDrawable;
+            public VH(View itemView) {
+                super(itemView);
+                //设置栏目样式
+                mLayoutItem = itemView.findViewById(R.id.layout_item);
+                mTvNodeUrl = itemView.findViewById(R.id.tv_node_url);
+                mTvNodeName = itemView.findViewById(R.id.tv_node_name);
+                mTvNodePing = itemView.findViewById(R.id.tv_ping);
+                mImgLoad = itemView.findViewById(R.id.img_ping);
+                mRadioSelected = itemView.findViewById(R.id.radio_selected);
+                mProgressDrawable = new ProgressDrawable();
+                mProgressDrawable.setColor(0xff666666);
+                mImgLoad.setImageDrawable(mProgressDrawable);
+                mRadioSelected.setClickable(false);
+
+                mLayoutItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        VH vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
+                        int position = getAdapterPosition();
+                        //重复点击
+                        if (position == mSelectedItem) {
+                            return;
+                        } else if (position != mSelectedItem && vh != null) {
+                            //切换
+                            vh.mRadioSelected.setChecked(false);
+                            vh.mLayoutItem.setActivated(false);
+                            publicNodes.get(mSelectedItem).isSelect = NOT_SELECT;
+                            Log.d(TAG, "onClick: "+publicNodes.get(mSelectedItem).nodeName +"isSelect = 0");
+                            publicNodes.get(position).isSelect = SELECT;
+                            Log.d(TAG, "onClick: "+publicNodes.get(position).nodeName +"isSelect = 1");
+                            mSelectedItem = position;
+                            vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
+                            vh.mRadioSelected.setChecked(true);
+                            vh.mLayoutItem.setActivated(true);
+                        }
+                    }
+                });
+                mLayoutItem.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        //定义AlertDialog.Builder对象，当长按列表项的时候弹出确认删除对话框
+                        AlertDialog.Builder builder=new AlertDialog.Builder(NodeSettingActivity.this);
+                        BlockNodeData.Node item = publicNodes.get(getAdapterPosition());
+                        builder.setMessage(getString(R.string.dialog_delete_node,item.url));
+                        builder.setTitle(getString(R.string.dialog_title_reminder));
+                        //添加AlertDialog.Builder对象的setPositiveButton()方法
+                        builder.setPositiveButton(getString(R.string.dialog_btn_confirm), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DeleteNode(item);
+                            }
+                        });
+                        //添加AlertDialog.Builder对象的setNegativeButton()方法
+                        builder.setNegativeButton(getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        builder.create().show();
+                        return true;
+                    }
+                });
+            }
         }
     }
 

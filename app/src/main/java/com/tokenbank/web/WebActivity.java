@@ -22,6 +22,7 @@ import com.tokenbank.R;
 import com.tokenbank.activity.BaseActivity;
 import com.tokenbank.config.AppConfig;
 import com.tokenbank.config.Constant;
+import com.tokenbank.fragment.DappFragment;
 import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.view.TitleBar;
 
@@ -61,12 +62,12 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
                 .setWebChromeClient(mWebChromeClient)
                 .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK) //严格模式 Android 4.2.2 以下会放弃注入对象 ，使用AgentWebView没影响。
                 .setMainFrameErrorView(R.layout.agentweb_error_page, -1) //参数1是错误显示的布局，参数2点击刷新控件ID -1表示点击整个布局都刷新， AgentWeb 3.0.0 加入。
-                .additionalHttpHeader(getUrl(), "cookie", "41bc7ddf04a26b91803f6b11817a5a1c")
+                .additionalHttpHeader(getAppInfo().appUrl, "cookie", "41bc7ddf04a26b91803f6b11817a5a1c")
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他页面时，弹窗质询用户前往其他应用 AgentWeb 3.0.0 加入。
                 .interceptUnkownUrl() //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
                 .createAgentWeb()//创建AgentWeb。
                 .ready()//设置 WebSettings。
-                .go(getUrl()); //WebView载入该url地址的页面并显示。
+                .go(getAppInfo().appUrl); //WebView载入该url地址的页面并显示。
 
         // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
         mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);//禁用手势滑动的动画效果
@@ -74,16 +75,17 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
         mAgentWeb.getAgentWebSettings().getWebSettings().setLoadWithOverviewMode(true); // 缩放至屏幕的大小
         //mAgentWeb.getWebCreator().getWebView().all
         //mAgentWeb.getWebCreator().getWebView()  获取WebView .
-        boolean flag = true;
-        //TODO dapp管理系统（发现功能）将会提供Dapp标识来确定具体的使用哪个 JSBridge
-        if(flag){
-            mMateMarkBridge = new MateMarkBridge(mAgentWeb, this, this);
-            mAgentWeb.getJsInterfaceHolder().addJavaObject("ethereum", mMateMarkBridge);
-            Log.d(TAG, "timeT: "+new Date().getTime());
-        } else {
-            mJsNativeBridge = new JsNativeBridge(mAgentWeb, this, this);
-            //mAgentWeb.getJsInterfaceHolder().addJavaObject("JsNativeBridge", mJsNativeBridge);
-            mAgentWeb.getJsInterfaceHolder().addJavaObject("TPJSBrigeClient", mJsNativeBridge);
+        switch (getAppInfo().support){
+            case "tp":
+                mJsNativeBridge = new JsNativeBridge(mAgentWeb, this, this);
+                //mAgentWeb.getJsInterfaceHolder().addJavaObject("JsNativeBridge", mJsNativeBridge);
+                mAgentWeb.getJsInterfaceHolder().addJavaObject("TPJSBrigeClient", mJsNativeBridge);
+                break;
+            case "MetaMask":
+                mMateMarkBridge = new MateMarkBridge(mAgentWeb, this, this);
+                mAgentWeb.getJsInterfaceHolder().addJavaObject("ethereum", mMateMarkBridge);
+                Log.d(TAG, "timeT: "+new Date().getTime());
+                break;
         }
     }
 
@@ -117,13 +119,13 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
     };
 
     //用户需要在打开WebActivity时传递对应的url
-    public String getUrl() {
+    public DappFragment.AppInfo getAppInfo() {
         Intent intent = getIntent();
-        String load_url = "";
+        DappFragment.AppInfo appInfo = null;
         if (intent != null) {
-            load_url = intent.getStringExtra(Constant.LOAD_URL);
+             appInfo = intent.getParcelableExtra(Constant.LOAD_URL);
         }
-        return load_url;
+        return appInfo;
     }
 
     @Override

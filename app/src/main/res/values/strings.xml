@@ -263,4 +263,5 @@
     <string name="toast_ConfirmNode_delete">默认节点不可删除！</string>
     <string name="toast_Confirm_exit">确认退出？请重试</string>
     <string name="tip_max">最多</string>
+    <string name="toast_walletError_dapp">当前钱包不支持该应用,请切换至%1s钱包</string>
 </resources>
