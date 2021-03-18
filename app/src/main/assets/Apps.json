@@ -20,6 +20,13 @@
       "desc":"ETH",
       "support": "MetaMask",
       "icin_url" : ""
+    },
+    {
+      "dapp_name": "TP.js测试",
+      "dapp_url": "file:///android_asset/DappTestPage.html",
+      "desc":"##",
+      "support": "tp",
+      "icin_url" : ""
     }
   ]
 }

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,14 +34,15 @@ import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.ViewUtil;
 import com.tokenbank.web.WebActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DappFragment extends BaseFragment implements View.OnClickListener{
-
+    private static final String TAG = "DappFragment";
     private EditText mEt_url;
     private TextView mTv_search;
     private GridView mViewGroup;
-    private List<AppInfo> mAppList;
+    private List<AppInfo> mAppList = new ArrayList<>();
     private String searchUrl;
 
     @Nullable
@@ -69,11 +71,11 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
 
     private AppInfo getAppInfo(GsonUtil item) {
         AppInfo app = new AppInfo();
-        app.icinUrl = item.getString("dapp_name","");
-        app.appName = item.getString("dapp_url","");
-        app.appUrl = item.getString("desc","");
-        app.desc = item.getString("support","");
-        app.support = item.getString("icin_url","");
+        app.icinUrl = item.getString("icin_url","");
+        app.appName = item.getString("dapp_name","");
+        app.appUrl = item.getString("dapp_url","");
+        app.desc = item.getString("desc","");
+        app.support = item.getString("support","");
         return app;
     }
 
@@ -96,10 +98,13 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
         mViewGroup.setAdapter(mGridViewAdapter);
         mGridViewAdapter.setList(mAppList);
         mViewGroup.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String desc = BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType());
                 AppInfo appInfo = mAppList.get(position);
-                if(appInfo.desc.equals(BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType()))){
+                if(appInfo.desc.equals("##") || appInfo.desc.equals(desc)){
                     startActivity(new Intent(getActivity(), WebActivity.class).putExtra(Constant.LOAD_URL, appInfo));
                 } else {
                     ViewUtil.showSysAlertDialog(getContext(), getString(R.string.toast_walletError_dapp,appInfo.desc), getString(R.string.dialog_btn_confirm));
