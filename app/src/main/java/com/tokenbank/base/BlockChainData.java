@@ -3,6 +3,7 @@ package com.tokenbank.base;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tokenbank.config.AppConfig;
 import com.tokenbank.utils.FileUtil;

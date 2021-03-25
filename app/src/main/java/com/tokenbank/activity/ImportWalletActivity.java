@@ -67,13 +67,12 @@ public class ImportWalletActivity extends BaseActivity implements View.OnClickLi
                 if (mBlock == null) {
                     this.finish();
                 } else {
-                    if (mBlock.hid == TBController.ETH_INDEX || mBlock.hid == TBController.MOAC_INDEX) {
+                    if (mBlock.hid == TBController.ETH_INDEX || mBlock.hid == TBController.MOAC_INDEX || mBlock.hid == TBController.FST_INDEX) {
                         initView();
-                    } else if (mBlock.hid == TBController.SWT_INDEX || mBlock.hid == TBController.EOS_INDEX) {
+                    } else if (mBlock.hid == TBController.SWT_INDEX || mBlock.hid == TBController.EOS_INDEX || mBlock.hid == TBController.FST_INDEX) {
                         Intent intent = new Intent();
                         intent.putExtra(PKFragment.BLOCK, mBlock);
-                        FragmentContainerActivity.start(ImportWalletActivity.this,
-                                PKFragment.class, intent);
+                        FragmentContainerActivity.start(ImportWalletActivity.this, PKFragment.class, intent);
                         this.finish();
                     } else {
                         finish();

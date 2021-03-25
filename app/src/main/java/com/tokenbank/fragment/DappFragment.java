@@ -98,8 +98,6 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
         mViewGroup.setAdapter(mGridViewAdapter);
         mGridViewAdapter.setList(mAppList);
         mViewGroup.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String desc = BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType());
@@ -129,13 +127,9 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
     private void search() {
         if (!TextUtils.isEmpty(searchUrl)) {
             if (searchUrl.startsWith("http://") || searchUrl.startsWith("https://")) {
-                if(searchUrl.equals("http://test")){
-                    searchUrl = "file:///android_asset/MateMaskTestPage.html";//测试
-                }
-                startActivity(new Intent(getActivity(), WebActivity.class)
-                        .putExtra(Constant.LOAD_URL, searchUrl));
+                startActivity(new Intent(getActivity(), WebActivity.class).putExtra(Constant.LOAD_URL, searchUrl));
             } else {
-                new MsgDialog(getContext(), "err").show();
+                ViewUtil.showSysAlertDialog(getContext(), getString(R.string.dialog_readConfig_err), getString(R.string.dialog_btn_confirm));
             }
         }
     }

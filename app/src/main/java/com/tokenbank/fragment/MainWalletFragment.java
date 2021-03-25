@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -170,7 +171,6 @@ public class MainWalletFragment extends BaseFragment implements View.OnClickList
             case R.id.wallet_action_transfer:
             case R.id.wallet_action_transfer1:
                 if (WalletInfoManager.getInstance().getWalletType() == TBController.EOS_INDEX) {
-                    TLog.d(TAG, "getWalletType = " + WalletInfoManager.getInstance().getWalletType());
                     EosTokenTransferActivity.startTokenTransferActivity(getContext(), "", "eosio.token", 0,
                             mWalletUtil.getDefaultTokenSymbol(), mWalletUtil.getDefaultDecimal());
                 } else {
@@ -542,7 +542,7 @@ public class MainWalletFragment extends BaseFragment implements View.OnClickList
                         mSwipteRefreshLayout.setRefreshing(false);
                     }
                 });
-            } else if (type == TBController.ETH_INDEX || type == TBController.MOAC_INDEX || type == TBController.EOS_INDEX) {
+            } else if (type == TBController.ETH_INDEX || type == TBController.MOAC_INDEX || type == TBController.EOS_INDEX || type == TBController.FST_INDEX) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

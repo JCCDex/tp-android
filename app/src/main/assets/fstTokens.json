@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "value": "mfc",
+      "contract": "0x0",
+      "decimals": 18,
+      "icon_url": "http://app.moacchain.net/qWallet/qWallet/statics/icons/token-icons/mfc-logo.png"
+    },
+    {
+      "value": "wztest",
+      "contract": "0xc19323c4c4298673b41c6847ba937b5e6d9d77db",
+      "decimals": 18,
+      "icon_url": "http://app.moacchain.net/qWallet/qWallet/statics/icons/token-icons/mfc-logo.png"
+    },
+    {
+      "value": "wzh_te",
+      "contract": "0xba753eb6cc555c867e4e7a554f3e13018a9c075b",
+      "decimals": 18,
+      "icon_url": "http://app.moacchain.net/qWallet/qWallet/statics/icons/token-icons/mfc-logo.png"
+    }
+  ]
+}

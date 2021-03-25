@@ -1,4 +1,4 @@
-package com.tokenbank.base;
+package com.tokenbank.wallet;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -6,6 +6,9 @@ import android.text.TextUtils;
 import com.android.jccdex.app.base.JCallback;
 import com.android.jccdex.app.moac.MoacWallet;
 import com.android.jccdex.app.util.JCCJson;
+import com.tokenbank.base.BaseWalletUtil;
+import com.tokenbank.base.TBController;
+import com.tokenbank.base.WCallback;
 import com.tokenbank.config.Constant;
 import com.tokenbank.dialog.EthGasSettignDialog;
 import com.tokenbank.utils.FileUtil;

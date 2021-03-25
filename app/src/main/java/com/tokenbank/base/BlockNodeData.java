@@ -10,6 +10,8 @@ import com.tokenbank.config.Constant;
 import com.tokenbank.utils.FileUtil;
 import com.tokenbank.utils.GsonUtil;
 
+import org.w3c.dom.Node;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,22 +37,22 @@ public class BlockNodeData {
     }
 
     public void init(){
-        //初始化时根据当前钱包类型切换节点列表，每次切换钱包时重新初始化
-        desc = BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType());
-        String customNodes = FileUtil.getStringFromSp(AppConfig.getContext(), Constant._node, Constant.NodeList);
-        LocalNodeList = toNodeList(customNodes);
-        // 无本地存储时从配置文件读取
-        if(LocalNodeList == null || LocalNodeList.size() == 0){
-            String publicNodes = FileUtil.getConfigFile(AppConfig.getContext(), "publicNode.json");
-            mNodeList = toNodeList(publicNodes);
-        } else {
-            mNodeList.addAll(LocalNodeList);
+        if(WalletInfoManager.getInstance().getWalletType() != 0){
+            desc = BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType());
+            String customNodes = FileUtil.getStringFromSp(AppConfig.getContext(), Constant._node, Constant.NodeList);
+            LocalNodeList = toNodeList(customNodes,LOCAL);
+            // 无本地存储时从配置文件读取
+            if(LocalNodeList == null || LocalNodeList.size() == 0){
+                String publicNodes = FileUtil.getConfigFile(AppConfig.getContext(), "publicNode.json");
+                mNodeList = toNodeList(publicNodes,PUBLIC);
+            } else {
+                mNodeList.addAll(LocalNodeList);
+            }
         }
     }
 
     public List<Node> getNodeList(){
         if (mNodeList == null || mNodeList.size() == 0) {
-            Log.e(TAG, "getPublicNodeList: 读取配置文件失败");
             init();
             return null;
         }
@@ -97,7 +99,7 @@ public class BlockNodeData {
         return data;
     }
 
-    private List<Node> toNodeList(String JsonStr) {
+    private List<Node> toNodeList(String JsonStr, int type) {
         List<Node> NodeList = new ArrayList<>();
         GsonUtil json = new GsonUtil(JsonStr);
         GsonUtil data = json.getArray("data","");
@@ -110,7 +112,11 @@ public class BlockNodeData {
                         for (int j = 0; j < nodes.getLength(); j++) {
                             GsonUtil nodeLit = nodes.getObject(j, "{}");
                             Node node = new Node();
-                            node.isSelect = nodeLit.getInt("isSelect",-1);
+                            if(type == PUBLIC && i == 0 && j == 0){
+                                node.isSelect = 1;
+                            } else {
+                                node.isSelect = nodeLit.getInt("isSelect",0);
+                            }
                             node.nodeName = nodeLit.getString("name","");
                             node.url = nodeLit.getString("url","");
                             node.isConfigNode = nodeLit.getInt("isConfigNode",PUBLIC);
@@ -131,7 +137,6 @@ public class BlockNodeData {
         item.put(desc,toJson(mNodeList));
         data.put(item);
         json.put("data",data);
-        Log.d(TAG, "saveNodeToSp: "+json);
         FileUtil.putStringToSp(AppConfig.getContext(), Constant._node, Constant.NodeList, json.toString());
     }
 

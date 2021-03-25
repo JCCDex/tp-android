@@ -28,6 +28,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     private LinearLayout mLayoutSplashBtn;
     private TextView mTvCreateWallet;
     private TextView mTvImportWallet;
+    private static int BACK_FLAG = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,20 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(BACK_FLAG == 0){
+            BACK_FLAG--;
+            AppConfig.getContext().clearActivity();
+            this.finish();
+            return;
+        }
+        if(BACK_FLAG == -1){
+            ToastUtil.toast(SplashActivity.this, getString(R.string.toast_Confirm_exit));
+            BACK_FLAG++;
+        }
+    }
+
     public static void startSplashActivity(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);
         intent.addFlags(context instanceof BaseActivity ? 0 : Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -65,12 +80,10 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
 
     private void gotoCreateWallet() {
         CreateWalletActivity.navToActivity(SplashActivity.this, REQUEST_CODE);
-        this.finish();
     }
 
     private void gotoImportWallet() {
         ImportWalletActivity.startImportWalletActivity(SplashActivity.this);
-        this.finish();
     }
 
     private void checkPermission() {

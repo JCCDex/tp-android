@@ -1,6 +1,13 @@
 package com.tokenbank.base;
 
 
+import com.tokenbank.wallet.EOSWalletBlockchain;
+import com.tokenbank.wallet.ETHWalletBlockchain;
+import com.tokenbank.wallet.JSTWalletBlockchain;
+import com.tokenbank.wallet.MOACWalletBlockchain;
+import com.tokenbank.wallet.SWTWalletBlockchain;
+import com.tokenbank.wallet.TestWalletBlockchain;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +20,7 @@ public class TBController {
     public final static int SWT_INDEX = 2;
     public final static int MOAC_INDEX = 3;
     public final static int EOS_INDEX = 4;
-
+    public final static int FST_INDEX = 5;
 
     private BaseWalletUtil mWalletUtil;
 
@@ -21,6 +28,7 @@ public class TBController {
     private BaseWalletUtil mEthWalletUtil;
     private BaseWalletUtil mSwtWalletUtil;
     private BaseWalletUtil mMoacWalletUtil;
+    private BaseWalletUtil mFstWalletUtil;
     private TestWalletBlockchain mNullWalletUtil;
 
     private static TBController sInstance = new TBController();
@@ -39,7 +47,7 @@ public class TBController {
         mSupportType.add(this.SWT_INDEX);
         mSupportType.add(this.MOAC_INDEX);
         mSupportType.add(this.EOS_INDEX);
-
+        mSupportType.add(this.FST_INDEX);
         mEosWalletUtil = new EOSWalletBlockchain();
         mEosWalletUtil.init();
 
@@ -51,6 +59,9 @@ public class TBController {
 
         mMoacWalletUtil = new MOACWalletBlockchain();
         mMoacWalletUtil.init();
+
+        mFstWalletUtil = new JSTWalletBlockchain();
+        mFstWalletUtil.init();
 
         mNullWalletUtil = new TestWalletBlockchain();
     }
@@ -64,6 +75,8 @@ public class TBController {
             mWalletUtil = mMoacWalletUtil;
         } else if (type == this.EOS_INDEX) {
             mWalletUtil = mEosWalletUtil;
+        } else if (type == this.FST_INDEX) {
+            mWalletUtil = mFstWalletUtil;
         } else {
             mWalletUtil = mNullWalletUtil;// do nothing
         }

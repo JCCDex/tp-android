@@ -1,4 +1,4 @@
-package com.tokenbank.base;
+package com.tokenbank.wallet;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -6,14 +6,16 @@ import android.text.TextUtils;
 import com.android.jccdex.app.base.JCallback;
 import com.android.jccdex.app.eos.EosWallet;
 import com.android.jccdex.app.util.JCCJson;
+import com.tokenbank.base.BaseWalletUtil;
+import com.tokenbank.base.TBController;
+import com.tokenbank.base.WCallback;
+import com.tokenbank.base.WalletInfoManager;
 import com.tokenbank.config.Constant;
-import com.tokenbank.dialog.EthGasSettignDialog;
 import com.tokenbank.net.api.GetTransactionDetailsRequest;
 import com.tokenbank.net.api.GetTransactionRecordRequest;
 import com.tokenbank.net.load.RequestPresenter;
 import com.tokenbank.utils.FileUtil;
 import com.tokenbank.utils.GsonUtil;
-import com.tokenbank.utils.TLog;
 import com.tokenbank.utils.Util;
 
 

@@ -48,6 +48,8 @@ public class Constant {
     public final static String eth_transaction_search_url = "https://etherscan.io/tx/";
     public final static String swt_transaction_search_url = "http://state.jingtum.com/#!/tx/";
 
+    public final static String fst_transaction_search_url = "http://dao.moacchain.net/transaction/";
+
     public final static String JC_EXCHANGE_SERVER = "https://e9joixcvsdvi4sf.jccdex.cn";
 
     public final static String ETHPLORER_SERVER = "http://api.ethplorer.io";

@@ -3,11 +3,15 @@ package com.tokenbank;
 import android.app.Application;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
+import com.android.jccdex.app.base.JCallback;
 import com.android.jccdex.app.eos.EosWallet;
 import com.android.jccdex.app.ethereum.EthereumWallet;
+import com.android.jccdex.app.fst.FstWallet;
 import com.android.jccdex.app.jingtum.JingtumWallet;
 import com.android.jccdex.app.moac.MoacWallet;
+import com.android.jccdex.app.util.JCCJson;
 import com.tokenbank.activity.BaseActivity;
 import com.tokenbank.base.BlockChainData;
 import com.tokenbank.base.BlockNodeData;
@@ -36,6 +40,8 @@ public class TApplication extends Application {
         BlockChainData.getInstance().init();
         WalletInfoManager.getInstance().init();
         BlockNodeData.getInstance().init();
+
+
         JingtumWallet.getInstance().init(this);
         EthereumWallet.getInstance().init(this);
         EthereumWallet.getInstance().initWeb3Provider("https://eth626892d.jccdex.cn");
@@ -43,6 +49,14 @@ public class TApplication extends Application {
         MoacWallet.getInstance().initChain3Provider("https://moac1ma17f1.jccdex.cn");
         EosWallet.getInstance().init(this);
         EosWallet.getInstance().initEosProvider("aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", "http://openapi.eos.ren");
+        FstWallet.getInstance().init(this, "http://101.200.174.239:7545", new JCallback() {
+            @Override
+            public void completion(JCCJson json) {
+                Log.d(TAG, "completion: init storm3 over");
+            }
+        });
+       // FstWallet.getInstance().initContract("0xc19323c4c4298673b41c6847ba937b5e6d9d77db", WalletInfoManager.getInstance().getWAddress(),BlockNodeData.getInstance().getNode().url);
+
     }
 
     public void addActivity(BaseActivity activity) {

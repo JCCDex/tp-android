@@ -1,7 +1,9 @@
-package com.tokenbank.base;
+package com.tokenbank.wallet;
 
 import android.content.Context;
 
+import com.tokenbank.base.BaseWalletUtil;
+import com.tokenbank.base.WCallback;
 import com.tokenbank.utils.GsonUtil;
 
 

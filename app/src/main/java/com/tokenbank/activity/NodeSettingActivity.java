@@ -22,13 +22,14 @@ import android.widget.TextView;
 import com.scwang.smartrefresh.layout.internal.ProgressDrawable;
 import com.tokenbank.R;
 import com.tokenbank.base.BlockNodeData;
-import com.tokenbank.base.NodeCheckUtil;
+import com.tokenbank.utils.NodeCheckUtil;
 import com.tokenbank.dialog.NodeCustomDialog;
 import com.tokenbank.utils.ToastUtil;
 import com.tokenbank.utils.ViewUtil;
 import com.tokenbank.view.TitleBar;
 
 import java.math.BigDecimal;
+import java.nio.file.ClosedFileSystemException;
 import java.util.List;
 
 
@@ -133,19 +134,7 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
             BlockNodeData.Node item = publicNodes.get(position);
-            // Node对象中position 未初始化,说明第一次加载 默认第一位选择
-            if(item.isSelect == -1){
-                if(position == 0){
-                    item.isSelect = SELECT;
-                    holder.mRadioSelected.setChecked(true);
-                    holder.mLayoutItem.setActivated(true);
-                    mSelectedItem = position;
-                } else {
-                    item.isSelect = NOT_SELECT;
-                }
-            }
-            // Node对象中position 初始化了, 必定有项目已经选择
-            if(item.isSelect != -1 && item.isSelect == SELECT ){
+            if(item.isSelect == SELECT ){
                 holder.mRadioSelected.setChecked(true);
                 holder.mLayoutItem.setActivated(true);
                 mSelectedItem = position;
@@ -250,9 +239,7 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
                             vh.mRadioSelected.setChecked(false);
                             vh.mLayoutItem.setActivated(false);
                             publicNodes.get(mSelectedItem).isSelect = NOT_SELECT;
-                            Log.d(TAG, "onClick: "+publicNodes.get(mSelectedItem).nodeName +"isSelect = 0");
                             publicNodes.get(position).isSelect = SELECT;
-                            Log.d(TAG, "onClick: "+publicNodes.get(position).nodeName +"isSelect = 1");
                             mSelectedItem = position;
                             vh = (VH) mNodeRecyclerView.findViewHolderForLayoutPosition(mSelectedItem);
                             vh.mRadioSelected.setChecked(true);
@@ -304,7 +291,6 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
      * 删除节点
      */
     private void DeleteNode(BlockNodeData.Node node) {
-        Log.d(TAG, "DeleteNode: "+node.isConfigNode);
         if(node.isConfigNode == BlockNodeData.PUBLIC){
             ToastUtil.toast(NodeSettingActivity.this, getString(R.string.toast_ConfirmNode_delete));
         } else {

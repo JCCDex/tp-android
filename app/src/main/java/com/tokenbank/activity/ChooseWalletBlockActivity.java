@@ -131,8 +131,7 @@ public class ChooseWalletBlockActivity extends BaseActivity {
             }
 
             BlockChainData.Block block = mList.get(position);
-            holder.name.setText(block.title
-            );
+            holder.name.setText(block.title);
             holder.des.setText(block.desc);
             TokenImageLoader.displayImage(block.symbol, holder.icon,
                     TokenImageLoader.imageOption(R.drawable.ic_images_common_loading, R.drawable.ic_images_asset_eth, R.drawable.ic_images_asset_eth));

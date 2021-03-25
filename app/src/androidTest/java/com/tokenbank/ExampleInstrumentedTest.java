@@ -5,7 +5,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.tokenbank.base.BaseWalletUtil;
-import com.tokenbank.base.SWTWalletBlockchain;
+import com.tokenbank.wallet.SWTWalletBlockchain;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

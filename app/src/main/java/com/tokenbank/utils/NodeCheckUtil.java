@@ -1,4 +1,4 @@
-package com.tokenbank.base;
+package com.tokenbank.utils;
 
 import com.stealthcopter.networktools.Ping;
 import com.stealthcopter.networktools.PortScan;
