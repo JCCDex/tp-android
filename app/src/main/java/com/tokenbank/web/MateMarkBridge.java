@@ -1,6 +1,7 @@
 package com.tokenbank.web;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -16,6 +17,7 @@ import com.tokenbank.config.AppConfig;
 import com.tokenbank.dialog.PwdDialog;
 import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.ToastUtil;
+import com.tokenbank.utils.ViewUtil;
 import com.zxing.activity.CaptureActivity;
 
 /**
@@ -104,19 +106,37 @@ public class MateMarkBridge {
                 notifySuccessResult(mCurrentWallet.waddress,callbackId);
                 break;
             case "eth_getEncryptionPublicKey":
-
+                Log.d(TAG, "eth_getEncryptionPublicKey: "+params);
                 break;
             case "eth_signTypedData":
-
+                Log.d(TAG, "eth_signTypedData: "+params);
                 break;
             case "eth_signTypedData_v3":
-
+                Log.d(TAG, "eth_signTypedData_v3: "+params);
                 break;
             case "eth_signTypedData_v4":
-
+                Log.d(TAG, "eth_signTypedData_v4: "+params);
                 break;
             case "wallet_getPermissions":
-
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ViewUtil.showSysAlertDialog(mContext, mContext.getString(R.string.enter_title_prompt), mContext.getString(R.string.toast_allow_web3_Permissions),
+                                mContext.getString(R.string.dialog_btn_confirm), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        notifySuccessResult("true",callbackId);
+                                        dialog.dismiss();
+                                    }
+                                }, mContext.getString(R.string.dialog_btn_cancel), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        notifySuccessResult("false",callbackId);
+                                        dialog.dismiss();
+                                    }
+                        });
+                    }
+                });
                 break;
             case "wallet_requestPermissions":
 
@@ -203,6 +223,7 @@ public class MateMarkBridge {
                 notifySuccessResult("true",callbackId);
                 break;
             case "wallet_addEthereumChain":
+                //待研究是否允许提供
                 break;
             case "personal_sign":break;
             default:

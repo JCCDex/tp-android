@@ -264,4 +264,5 @@
     <string name="toast_Confirm_exit">确认退出？请重试</string>
     <string name="tip_max">最多</string>
     <string name="toast_walletError_dapp">当前钱包不支持该应用,请切换至%1s钱包</string>
+    <string name="toast_allow_web3_Permissions">当前应用试图获取您的钱包权限</string>
 </resources>

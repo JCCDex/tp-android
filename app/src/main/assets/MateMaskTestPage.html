@@ -19,22 +19,32 @@
     <script>
     //用来验证框架可用性，MateMask提供了专用的测试 demo
         function Connected(){
+            console.log("+++++++++++++++++++++")
             test1().then((result) =>{
                 showElement(result)
+            }).catch((e) =>{
+                showElement(e.code)
             })
         }
 
         async function test1(){
             const { ethereum } = window
-            const _accounts = await ethereum.request({
-                method: 'eth_accounts',
-            })
-            console.log("_accounts = "+_accounts[0])
-            return _accounts;
+             const newAccounts = await ethereum.request({method: 'wallet_getPermissions'})
+             return getPermissionsDisplayString(newAccounts);
         }
 
         function showElement(msg) {
             alert("调用成功:" + msg);
+        }
+
+        function getPermissionsDisplayString (permissionsArray) {
+          if (permissionsArray.length === 0) {
+            console.log("+++++++++++++++++++++222222222222")
+            return 'No permissions found.'
+          }
+          const permissionNames = permissionsArray.map((perm) => perm.parentCapability)
+          console.log("+++++++++++++++++++++33333333333333  "+permissionNames.toString())
+          return permissionNames.reduce((acc, name) => `${acc}${name}, `, '').replace(/, $/u, '')
         }
 
 

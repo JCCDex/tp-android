@@ -27,6 +27,13 @@
       "desc":"##",
       "support": "tp",
       "icin_url" : ""
+    },
+    {
+      "dapp_name": "MetaMaskTestDAPP测试",
+      "dapp_url": "file:///android_asset/MateMaskTestPage.html",
+      "desc":"##",
+      "support": "MetaMask",
+      "icin_url" : ""
     }
   ]
 }
