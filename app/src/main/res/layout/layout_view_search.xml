@@ -10,7 +10,7 @@
         android:layout_weight="5"
         android:imeOptions="actionSearch"
         android:singleLine="true"
-        android:text=""
+        android:text="http://"
         android:textSize="@dimen/text_size_15" />
 
     <TextView

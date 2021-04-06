@@ -95,7 +95,6 @@ public class CaptureActivity extends BaseActivity implements Callback {
     }
 
     private Handler mHandler = new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
             mProgress.dismiss();
@@ -119,7 +118,6 @@ public class CaptureActivity extends BaseActivity implements Callback {
 
             }
         }
-
     };
 
     public static void startCaptureActivity(Context context, String callBackId) {
@@ -150,17 +148,15 @@ public class CaptureActivity extends BaseActivity implements Callback {
                         @Override
                         public void run() {
                             Result result = QRUtils.scanningImage(photo_path);
+                            Message m = mHandler.obtainMessage();
                             if (result != null) {
-                                Message m = mHandler.obtainMessage();
                                 m.what = PARSE_BARCODE_SUC;
                                 m.obj = result.getText();
-                                mHandler.sendMessage(m);
                             } else {
-                                Message m = mHandler.obtainMessage();
                                 m.what = PARSE_BARCODE_FAIL;
                                 m.obj = "Scan failed!";
-                                mHandler.sendMessage(m);
                             }
+                            mHandler.sendMessage(m);
                         }
                     }).start();
 

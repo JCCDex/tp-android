@@ -2,6 +2,7 @@ package com.tokenbank.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.blob.BlobHandle;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -109,6 +110,11 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
         this.finish();
     }
 
+    @Override
+    public void onBackPressed() {
+        saveNode();
+        this.finish();
+    }
     @Override
     public void onMiddleClick(View view) {
         saveNode();
@@ -308,6 +314,8 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void saveNode(){
+        BlockNodeData.getInstance().setCurrentNode(publicNodes.get(mSelectedItem));
+        Log.d(TAG, "saveNode: "+publicNodes.get(mSelectedItem).url);
         BlockNodeData.getInstance().saveNodeToSp();
     }
 }

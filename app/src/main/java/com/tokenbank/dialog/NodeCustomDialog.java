@@ -102,7 +102,7 @@ public class NodeCustomDialog extends BaseDialog implements View.OnClickListener
                     node.url = url;
                     node.nodeName = "自定义节点";
                     node.isSelect = -1;
-                    node.isConfigNode = BlockNodeData.LOCAL;
+                    node.isConfigNode = BlockNodeData.PRIVATE;
                     if(BlockNodeData.getInstance().addNode(node)){
                         mOnConfirmOrderListener.onConfirmOrder();
                     } else {

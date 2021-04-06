@@ -34,6 +34,27 @@
       "desc":"##",
       "support": "MetaMask",
       "icin_url" : ""
+    },
+    {
+      "dapp_name": "迷恋猫",
+      "dapp_url": "https://www.cryptokitties.co/?utm_source=tokenpocket",
+      "desc":"##",
+      "support": "MetaMask",
+      "icin_url" : ""
+    },
+    {
+      "dapp_name": "uniswapTP版",
+      "dapp_url": "https://uniswap.tokenpocket.pro/?utm_source=tokenpocket#/swap",
+      "desc":"##",
+      "support": "MetaMask",
+      "icin_url" : ""
+    },
+    {
+      "dapp_name": "uniswap",
+      "dapp_url": "https://app.uniswap.org/?utm_source=DappRadar&utm_medium=deeplink&utm_campaign=visit-website#/swap",
+      "desc":"##",
+      "support": "MetaMask",
+      "icin_url" : ""
     }
   ]
 }

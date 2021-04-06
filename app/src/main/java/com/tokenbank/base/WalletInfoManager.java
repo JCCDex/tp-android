@@ -9,6 +9,8 @@ import com.tokenbank.config.AppConfig;
 import com.tokenbank.config.Constant;
 import com.tokenbank.utils.FileUtil;
 import com.tokenbank.utils.ToastUtil;
+import com.tokenbank.web.ChainChangeEvent;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -338,8 +340,11 @@ public class WalletInfoManager {
                 !TextUtils.isEmpty(currentWallet.wpk) &&
                 currentWallet.type > 0 &&
                 currentWallet.wid > 0l) {
-
             this.mCurrentWallet = currentWallet;
+            //TODO 切换钱包之后应该对应一堆切换事件 节点,底层根据节点的重新初始化. 写个事件管理
+            ChainChangeEvent event = new ChainChangeEvent();
+            event.setEventName("accountsChanged");
+            EventBus.getDefault().post(event);
             updateWalletDefaultSp(currentWallet);
             return true;
         } else {
@@ -405,6 +410,7 @@ public class WalletInfoManager {
             ToastUtil.toast(AppConfig.getContext(), AppConfig.getContext().getString(R.string.toast_update_default_wallet_failed));
             return;
         }
+        //TODO 钱包更新事件
         FileUtil.putIntToSp(AppConfig.getContext(), Constant.wallet_def_file, Constant.wtype, wallet.type);
         FileUtil.putLongToSp(AppConfig.getContext(), Constant.wallet_def_file, Constant.wid, wallet.wid);
         FileUtil.putStringToSp(AppConfig.getContext(), Constant.wallet_def_file, Constant.wname, wallet.wname);

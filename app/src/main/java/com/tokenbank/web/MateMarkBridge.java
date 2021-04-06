@@ -10,6 +10,7 @@ import com.just.agentweb.AgentWeb;
 import com.tokenbank.R;
 import com.tokenbank.base.BaseWalletUtil;
 import com.tokenbank.base.BlockChainData;
+import com.tokenbank.base.BlockNodeData;
 import com.tokenbank.base.TBController;
 import com.tokenbank.base.WCallback;
 import com.tokenbank.base.WalletInfoManager;
@@ -45,23 +46,22 @@ public class MateMarkBridge {
         this.mWalletUtil = TBController.getInstance().getWalletUtil(WalletInfoManager.getInstance().getWalletType());
     }
 
+
+
     @JavascriptInterface
     public void callHandler(String methodName, String params, final String callbackId) {
         mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
         block = BlockChainData.getInstance().getBolckByHid(WalletInfoManager.getInstance().getWalletType());
         GsonUtil result = new GsonUtil("{}");
         GsonUtil ArrayFormResult = new GsonUtil("[]");
-        Log.e(TAG, "原生的这个方法被调用 ： "+methodName);
+        Log.e(TAG, "原生的这个方法被调用 ： "+methodName + "   参数为 "+ params);
         switch (methodName){
-            case "net_version":
-                notifySuccessResult("1.2",callbackId);
-                break;
-            case "eth_chainId":
-                notifySuccessResult("1",callbackId);
-                break;
             case "eth_accounts":
                 result.putString("result",mCurrentWallet.waddress);
                 notifySuccessResult(result,callbackId);
+                break;
+            case "getNode":
+                notifySuccessResult(BlockNodeData.getInstance().getCurrentNode().url,callbackId);
                 break;
             case "eth_sign":
                 final GsonUtil EthTx = new GsonUtil(params);
@@ -139,27 +139,6 @@ public class MateMarkBridge {
                 });
                 break;
             case "wallet_requestPermissions":
-
-                break;
-            case "eth_call":
-
-                break;
-            case "eth_getBalance":
-                AppConfig.postOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWalletUtil.queryBalance(address, mCurrentWallet.type, new WCallback() {
-                            @Override
-                            public void onGetWResult(int ret, GsonUtil extra) {
-                                if (ret == 0) {
-                                    notifySuccessResult(extra.getString("balance",""),callbackId);
-                                }
-                            }
-                        });
-                    }
-                });
-                break;
-            case "eth_estimateGas":
 
                 break;
             case "eth_sendTransaction":

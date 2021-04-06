@@ -51,7 +51,7 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
         setContentView(R.layout.activity_web);
         mTitleBar = (TitleBar) findViewById(R.id.title_bar);
         mTitleBar.setLeftDrawable(R.drawable.ic_back);
-        mTitleBar.setTitle(getString(R.string.titleBar_dapp));
+        mTitleBar.setTitle(getAppInfo().appName);
         mTitleBar.setRightTextColor(R.color.white);
         mTitleBar.setTitleBarClickListener(this);
         mLinearLayout = (LinearLayout) this.findViewById(R.id.container);
@@ -68,7 +68,6 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
                 .createAgentWeb()//创建AgentWeb。
                 .ready()//设置 WebSettings。
                 .go(getAppInfo().appUrl); //WebView载入该url地址的页面并显示。
-
         // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供 ， 请从WebView方面入手设置。
         mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);//禁用手势滑动的动画效果
         mAgentWeb.getAgentWebSettings().getWebSettings().setUseWideViewPort(true); //将图片调整到适合webview的大小
@@ -175,6 +174,11 @@ public class WebActivity extends BaseActivity implements View.OnClickListener, T
         GsonUtil result = new GsonUtil("{}");
         result.putString("qrResult",msg);
         mAgentWeb.getJsAccessEntrace().callJs("javascript:" + callbackId + "('" + result.toString() + "')");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ChainChangeEvent chainChangeEvent) {
+        mAgentWeb.getJsAccessEntrace().callJs("javascript:" + "notifyEvent" + "('" + chainChangeEvent.getEventName() + "')");
     }
 
     @Override

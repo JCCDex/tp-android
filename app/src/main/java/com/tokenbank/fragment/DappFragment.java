@@ -114,7 +114,8 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tv_search : search();break;
+            case R.id.tv_search :
+                search();break;
         }
     }
 
@@ -125,9 +126,13 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
     }
 
     private void search() {
+        searchUrl = mEt_url.getText().toString();
         if (!TextUtils.isEmpty(searchUrl)) {
             if (searchUrl.startsWith("http://") || searchUrl.startsWith("https://")) {
-                startActivity(new Intent(getActivity(), WebActivity.class).putExtra(Constant.LOAD_URL, searchUrl));
+                AppInfo appInfo = new AppInfo();
+                appInfo.appUrl = searchUrl;
+                appInfo.support = "MetaMask";
+                startActivity(new Intent(getActivity(), WebActivity.class).putExtra(Constant.LOAD_URL, appInfo));
             } else {
                 ViewUtil.showSysAlertDialog(getContext(), getString(R.string.dialog_readConfig_err), getString(R.string.dialog_btn_confirm));
             }
