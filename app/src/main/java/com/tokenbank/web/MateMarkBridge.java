@@ -31,7 +31,6 @@ import com.zxing.activity.CaptureActivity;
 public class MateMarkBridge {
 
     private static final String TAG = "MateMarkBridge";
-    private BlockChainData.Block block;
     private WalletInfoManager.WData mCurrentWallet; //当前使用哪个钱包转账
     private String version,name,address;
     private AgentWeb mAgentWeb;
@@ -46,12 +45,9 @@ public class MateMarkBridge {
         this.mWalletUtil = TBController.getInstance().getWalletUtil(WalletInfoManager.getInstance().getWalletType());
     }
 
-
-
     @JavascriptInterface
     public void callHandler(String methodName, String params, final String callbackId) {
         mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
-        block = BlockChainData.getInstance().getBolckByHid(WalletInfoManager.getInstance().getWalletType());
         GsonUtil result = new GsonUtil("{}");
         GsonUtil ArrayFormResult = new GsonUtil("[]");
         Log.e(TAG, "原生的这个方法被调用 ： "+methodName + "   参数为 "+ params);
@@ -204,7 +200,9 @@ public class MateMarkBridge {
             case "wallet_addEthereumChain":
                 //待研究是否允许提供
                 break;
-            case "personal_sign":break;
+            case "personal_sign":
+
+                break;
             default:
                 Log.e(TAG, "callHandler: no such method : "+methodName);
                 break;

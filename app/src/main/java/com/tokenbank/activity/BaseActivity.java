@@ -4,21 +4,36 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.jccdex.app.base.JCallback;
+import com.android.jccdex.app.eos.EosWallet;
+import com.android.jccdex.app.ethereum.EthereumWallet;
+import com.android.jccdex.app.fst.FstWallet;
+import com.android.jccdex.app.jingtum.JingtumWallet;
+import com.android.jccdex.app.moac.MoacWallet;
+import com.android.jccdex.app.util.JCCJson;
 import com.tokenbank.TApplication;
+import com.tokenbank.base.BlockNodeData;
+import com.tokenbank.base.TBController;
 import com.tokenbank.utils.LanguageUtil;
 import com.tokenbank.utils.PermissionUtil;
+import com.tokenbank.web.ChainChangeEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
 import java.util.Locale;
 
 
 public class BaseActivity extends AppCompatActivity {
+
+    private static final String TAG = "BaseActivity";
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -40,6 +55,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onDestroy();
         TApplication application = (TApplication) getApplication();
         application.popActivity(this);
+        EventBus.getDefault().removeAllStickyEvents();
         EventBus.getDefault().unregister(this);
     }
 
@@ -73,12 +89,71 @@ public class BaseActivity extends AppCompatActivity {
                 Locale locale = LanguageUtil.getUserLocale(this);
                 LanguageUtil.updateLocale(this, locale);
 //                recreate();//刷新界面
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
+                refresh();
                 break;
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onEvent(ChainChangeEvent chainChangeEvent) {
+        String eventName = chainChangeEvent.getEventName();
+        if(eventName.equals("BlockNodeDataInitOver")){
+            List<BlockNodeData.Node> NodeList = BlockNodeData.getInstance().getChooseNodeList();
+            if(NodeList.size()!=0){
+                JingtumWallet.getInstance().init(this);
+                EthereumWallet.getInstance().init(this);
+                EthereumWallet.getInstance().initWeb3Provider(NodeList.get(TBController.ETH_INDEX).url);
+                MoacWallet.getInstance().init(this);
+                MoacWallet.getInstance().initChain3Provider(NodeList.get(TBController.MOAC_INDEX).url);
+                EosWallet.getInstance().init(this);
+                EosWallet.getInstance().initEosProvider("aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", NodeList.get(TBController.EOS_INDEX).url);
+                FstWallet.getInstance().init(this, NodeList.get(TBController.FST_INDEX).url, new JCallback() {
+                    @Override
+                    public void completion(JCCJson json) {
+                        Log.d(TAG, "completion: init storm3 over");
+                    }
+                });
+            }else {
+                Log.e(TAG, "onEvent: 读取节点列表失败");
+            }
+        }
+        if (chainChangeEvent.getEventName().equals("chainChanged")) {
+            String url = BlockNodeData.getInstance().getCurrentNode().url;
+            switch (TBController.getInstance().getCurrentChainType()) {
+                case TBController.ETH_INDEX:
+                    EthereumWallet.getInstance().init(this);
+                    Log.d(TAG, "onEvent: "+url);
+                    EthereumWallet.getInstance().initWeb3Provider(url);
+                    break;
+                case TBController.SWT_INDEX:
+                    JingtumWallet.getInstance().init(this);
+                    break;
+                case TBController.MOAC_INDEX:
+                    MoacWallet.getInstance().init(this);
+                    MoacWallet.getInstance().initChain3Provider(url);
+                    break;
+                case TBController.EOS_INDEX:
+                    EosWallet.getInstance().init(this);
+                    EosWallet.getInstance().initEosProvider("aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", url);
+                    break;
+                case TBController.FST_INDEX:
+                    FstWallet.getInstance().init(this, url, new JCallback() {
+                        @Override
+                        public void completion(JCCJson json) {
+                            Log.d(TAG, "completion: init storm3 over");
+                        }
+                    });
+                    break;
+            }
+            refresh();
+        }
+    }
+
+    public void refresh(){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }
 }

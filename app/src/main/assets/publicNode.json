@@ -5,6 +5,9 @@
         {
           "name": "默认节点",
           "url": "https://eth626892d.jccdex.cn"
+        },{
+          "name": "测试链节点",
+          "url": "https://ropsten.infura.io/v3/9af2760f61ea4fedbf3b10b5c07f2781"
         }
       ]
     },
@@ -20,7 +23,7 @@
       "MOAC": [
         {
           "name": "默认节点",
-          "url": "http://101.200.174.239:7545"
+          "url": "https://moac1ma17f1.jccdex.cn"
         }
       ]
     },
@@ -28,7 +31,7 @@
       "EOS": [
         {
           "name": "默认节点",
-          "url": "http://101.200.174.239:7545"
+          "url": "http://openapi.eos.ren"
         }
       ]
     },

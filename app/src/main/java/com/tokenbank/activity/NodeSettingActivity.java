@@ -2,7 +2,6 @@ package com.tokenbank.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.blob.BlobHandle;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,9 +27,11 @@ import com.tokenbank.dialog.NodeCustomDialog;
 import com.tokenbank.utils.ToastUtil;
 import com.tokenbank.utils.ViewUtil;
 import com.tokenbank.view.TitleBar;
+import com.tokenbank.web.ChainChangeEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.math.BigDecimal;
-import java.nio.file.ClosedFileSystemException;
 import java.util.List;
 
 
@@ -54,6 +55,7 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     private NodeRecordAdapter mAdapter;
     private Button mBtnAddNode;
     private static CompositeDisposable compositeDisposable;
+    private ChainChangeEvent event = new ChainChangeEvent();
     private final static BigDecimal PING_QUICK = new BigDecimal("60");
     private final static BigDecimal PING_ZERO = new BigDecimal("01");
     private final static BigDecimal PING_LOW = new BigDecimal("100");
@@ -288,6 +290,7 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     private void getPublicNode() {
         publicNodes = BlockNodeData.getInstance().getNodeList();
         if(publicNodes == null || publicNodes.size() == 0){
+            Log.e(TAG, "getPublicNode: 读取配置文件失败");
             this.finish();
         }
         mAdapter.notifyDataSetChanged();
@@ -314,8 +317,11 @@ public class NodeSettingActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void saveNode(){
-        BlockNodeData.getInstance().setCurrentNode(publicNodes.get(mSelectedItem));
-        Log.d(TAG, "saveNode: "+publicNodes.get(mSelectedItem).url);
+        if(!BlockNodeData.getInstance().getCurrentNode().url.equals(publicNodes.get(mSelectedItem).url)){
+            BlockNodeData.getInstance().setCurrentNode(publicNodes.get(mSelectedItem));
+            event.setEventName("chainChanged");
+            EventBus.getDefault().postSticky(event);
+        }
         BlockNodeData.getInstance().saveNodeToSp();
     }
 }

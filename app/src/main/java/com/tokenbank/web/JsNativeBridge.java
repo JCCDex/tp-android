@@ -61,7 +61,6 @@ public class JsNativeBridge {
     private IWebCallBack mWebCallBack;
     private BaseWalletUtil mWalletUtil;
     private WalletInfoManager.WData mCurrentWallet; //当前使用哪个钱包转账
-    private BlockChainData.Block block;
     public JsNativeBridge(AgentWeb agent, Context context, IWebCallBack callback) {
         this.mAgentWeb = agent;
         this.mContext = context;
@@ -73,7 +72,6 @@ public class JsNativeBridge {
     @JavascriptInterface
     public void callMessage(String methodName, String params, final String callbackId) {
         mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
-        block = BlockChainData.getInstance().getBolckByHid(WalletInfoManager.getInstance().getWalletType());
         GsonUtil data = new GsonUtil("{}");
         Log.d(TAG, "callMessage: "+methodName + " be called");
         switch (methodName) {
@@ -425,7 +423,7 @@ public class JsNativeBridge {
                 break;
 
             case "getNodeUrl":
-                String node = BlockNodeData.getInstance().getNode().url;
+                String node = BlockNodeData.getInstance().getCurrentNode().url;
                 data.putString("blockchain","");
                 data.putString("nodeUrl",node);
                 notifySuccessResult(data,callbackId);

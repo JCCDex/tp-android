@@ -1,6 +1,8 @@
 package com.tokenbank.base;
 
 
+import android.content.Intent;
+
 import com.tokenbank.wallet.EOSWalletBlockchain;
 import com.tokenbank.wallet.ETHWalletBlockchain;
 import com.tokenbank.wallet.JSTWalletBlockchain;
@@ -21,9 +23,8 @@ public class TBController {
     public final static int MOAC_INDEX = 3;
     public final static int EOS_INDEX = 4;
     public final static int FST_INDEX = 5;
-
     private BaseWalletUtil mWalletUtil;
-
+    public static int CurrentChainType = -1;
     private BaseWalletUtil mEosWalletUtil;
     private BaseWalletUtil mEthWalletUtil;
     private BaseWalletUtil mSwtWalletUtil;
@@ -67,6 +68,7 @@ public class TBController {
     }
 
     public BaseWalletUtil getWalletUtil(int type) {
+        CurrentChainType = type;
         if (type == this.ETH_INDEX) {
             mWalletUtil = mEthWalletUtil;
         } else if (type == this.SWT_INDEX) {
@@ -87,4 +89,19 @@ public class TBController {
         return mSupportType;
     }
 
+    public String getDescByIndex(Integer i){
+        switch (i){
+            case ETH_INDEX : return "ETH";
+            case SWT_INDEX : return "JINGTUM";
+            case MOAC_INDEX : return "MOAC";
+            case EOS_INDEX : return "EOS";
+            case FST_INDEX : return "FST";
+        }
+        return "";
+    }
+
+    public int getCurrentChainType(){
+       CurrentChainType = WalletInfoManager.getInstance().getWalletType();
+       return CurrentChainType;
+    }
 }

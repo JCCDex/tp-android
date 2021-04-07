@@ -70,20 +70,6 @@ public class BlockChainData {
         return mBlock;
     }
 
-    public String getDescByHid(long hid){
-        if(mBlock == null || mBlock.size() == 0) {
-            init();
-            return null;
-        }
-        int len = mBlock.size();
-        for(int i =0; i < len; i++) {
-            if(mBlock.get(i).hid == hid){
-                return mBlock.get(i).desc;
-            }
-        }
-        return null;
-    }
-
     public Block getBolckByHid(long hid) {
         if(mBlock == null || mBlock.size() == 0) {
             init();

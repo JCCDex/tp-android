@@ -2,6 +2,7 @@ package com.tokenbank.base;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tokenbank.R;
 import com.tokenbank.activity.SplashActivity;
@@ -19,9 +20,10 @@ import java.util.List;
 
 public class WalletInfoManager {
 
+    private static final String TAG = "WalletInfoManager";
     private static WalletInfoManager instance = new WalletInfoManager();
     private WData mCurrentWallet;
-
+    private ChainChangeEvent event = new ChainChangeEvent();
     private WalletInfoManager() {
 
     }
@@ -341,11 +343,9 @@ public class WalletInfoManager {
                 currentWallet.type > 0 &&
                 currentWallet.wid > 0l) {
             this.mCurrentWallet = currentWallet;
-            //TODO 切换钱包之后应该对应一堆切换事件 节点,底层根据节点的重新初始化. 写个事件管理
-            ChainChangeEvent event = new ChainChangeEvent();
-            event.setEventName("accountsChanged");
-            EventBus.getDefault().post(event);
             updateWalletDefaultSp(currentWallet);
+            event.setEventName("accountsChanged");
+            EventBus.getDefault().postSticky(event);
             return true;
         } else {
             return false;

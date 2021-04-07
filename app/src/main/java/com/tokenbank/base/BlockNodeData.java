@@ -3,6 +3,7 @@ package com.tokenbank.base;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tokenbank.config.AppConfig;
 import com.tokenbank.config.Constant;
@@ -16,17 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 用来维护节点列表和检测节点的连接性
+ * 用来维护当前钱包所在链的节点列表
  */
 public class BlockNodeData {
     private static final String TAG = "BlockNodeData";
     private List<Node> mNodeList = new ArrayList<>(); //系统默认列点列表    通过配置文件获取
-    private List<Node> LocalNodeList = new ArrayList<>(); //本地节点列表 包含用户节点    通过sp存储获取
     private static BlockNodeData instance;
     public static final int PUBLIC = 0; //从配置读取的公共节点  不可删除
     public static final int PRIVATE = 1; //用户添加的的个人节点  可以删除
-    private String desc;
     private Node mCurrentNode;
+    private int ChainType;
+    private ChainChangeEvent event = new ChainChangeEvent();
     private BlockNodeData() {
     }
 
@@ -38,35 +39,61 @@ public class BlockNodeData {
     }
 
     public void init(){
+        initNode();
+        event.setEventName("BlockNodeDataInitOver");
+        EventBus.getDefault().postSticky(event);
+    }
+
+    public void initNode(){
+        if (mNodeList != null && mNodeList.size() != 0){
+            mNodeList.clear();
+        }
         if(WalletInfoManager.getInstance().getWalletType() != 0){
-            desc = BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType());
-            String customNodes = FileUtil.getStringFromSp(AppConfig.getContext(), Constant._node, Constant.NodeList);
-            LocalNodeList = toNodeList(customNodes,PRIVATE);
-            // 无本地存储时从配置文件读取
-            if(LocalNodeList == null || LocalNodeList.size() == 0){
-                String publicNodes = FileUtil.getConfigFile(AppConfig.getContext(), "publicNode.json");
-                mNodeList = toNodeList(publicNodes,PUBLIC);
-            } else {
-                mNodeList.addAll(LocalNodeList);
-            }
+            ChainType = TBController.getInstance().getCurrentChainType();
+            mNodeList = toNodeList(getNodesInfo(),ChainType);
         }
     }
+
+    /**
+     * 读取文件中的节点信息
+     * @return
+     */
+    public String getNodesInfo(){
+        String NodesInfo = FileUtil.getStringFromSp(AppConfig.getContext(), Constant._node, Constant.NodeList);
+        if(NodesInfo.equals("")){
+            NodesInfo = FileUtil.getConfigFile(AppConfig.getContext(), "publicNode.json");
+        }
+        return NodesInfo;
+    }
+
+    /**
+     * 返回所有被选中的节点列表  地址下标和链索引匹配 特别的,下标为0时 为mCurrentNode
+     * @return
+     */
+    public List<Node> getChooseNodeList(){
+        List<Integer> mTypeList = TBController.getInstance().getSupportType();
+        List<Node> NodeList = new ArrayList<>();
+        NodeList.add(mCurrentNode);
+        String NodeInfo = getNodesInfo();
+        for(int i =1; i <= mTypeList.size();i++){
+            List<Node> item = toNodeList(NodeInfo,i);
+            for (Node node : item) {
+                if (node.isSelect == 1) {
+                    NodeList.add(node);
+                    break;
+                }
+            }
+        }
+        return NodeList;
+    }
+
 
     public List<Node> getNodeList(){
         if (mNodeList == null || mNodeList.size() == 0) {
-            init();
-            return null;
+            initNode();
+            return mNodeList;
         }
         return mNodeList;
-    }
-
-    public Node getNode(){
-        for (Node node : mNodeList) {
-            if(node.isSelect == 1){
-                return node;
-            }
-        }
-        return null;
     }
 
     public Node getCurrentNode(){
@@ -74,14 +101,8 @@ public class BlockNodeData {
     }
 
     public void setCurrentNode(Node node){
-        if (!(mCurrentNode.url.equals(node.url))){
-            ChainChangeEvent event = new ChainChangeEvent();
-            event.setEventName("chainChanged");
-            EventBus.getDefault().post(event);
-        }
         this.mCurrentNode = node;
     }
-
 
     public boolean addNode(Node node){
         for (Node item : mNodeList) {
@@ -113,7 +134,7 @@ public class BlockNodeData {
         return data;
     }
 
-    private List<Node> toNodeList(String JsonStr, int type) {
+    private List<Node> toNodeList(String JsonStr,int chainType) {
         List<Node> NodeList = new ArrayList<>();
         GsonUtil json = new GsonUtil(JsonStr);
         GsonUtil data = json.getArray("data","");
@@ -121,22 +142,24 @@ public class BlockNodeData {
             for (int i= 0;i<data.getLength();i++){
                 GsonUtil item = data.getObject(i, "{}");
                 if(item.isValid()){
-                    GsonUtil nodes = item.getArray(desc, "");
+                    GsonUtil nodes = item.getArray(TBController.getInstance().getDescByIndex(chainType), "");
                     if(nodes.isValid()){
                         for (int j = 0; j < nodes.getLength(); j++) {
                             GsonUtil nodeList = nodes.getObject(j, "{}");
                             Node node = new Node();
-                            if(type == PUBLIC && i == 0 && j == 0){
-                                //从配置读取时默认第一位可选
+                            if(j == 0 && nodeList.getInt("isSelect",-1) == -1){
+                                //未初始化时 第一位默认选中
                                 node.isSelect = 1;
                                 node.nodeName = nodeList.getString("name","");
                                 node.url = nodeList.getString("url","");
                                 node.isConfigNode = nodeList.getInt("isConfigNode",PUBLIC);
-                                mCurrentNode = node;
+                                if(chainType == TBController.getInstance().getCurrentChainType()){
+                                    mCurrentNode = node;
+                                }
                             } else {
                                 //从配置列表读取的节点需初始化, 逻辑和从本地读取的节点相同
                                 node.isSelect = nodeList.getInt("isSelect",0);
-                                if(node.isSelect == 1){
+                                if(node.isSelect == 1 && chainType == TBController.getInstance().getCurrentChainType()){
                                     mCurrentNode = node;
                                 }
                                 node.nodeName = nodeList.getString("name","");
@@ -145,6 +168,7 @@ public class BlockNodeData {
                             }
                             NodeList.add(node);
                         }
+                        break;
                     }
                 }
             }
@@ -153,13 +177,25 @@ public class BlockNodeData {
     }
 
     public void saveNodeToSp(){
-        //保存的逻辑为覆盖保存 存储时所有节点一并存储到 sp
+        //保存的逻辑为覆盖保存, 存储时所有节点一并存储到 sp , 存储格式为配置文件的格式,方便读取.
+        GsonUtil oldJson = new GsonUtil(getNodesInfo());
+        GsonUtil data = oldJson.getArray("data","");
+
         GsonUtil json = new GsonUtil("{}");
-        GsonUtil data = new GsonUtil("[]");
-        GsonUtil item = new GsonUtil("{}");
-        item.put(desc,toJson(mNodeList));
-        data.put(item);
-        json.put("data",data);
+        GsonUtil data1 = new GsonUtil("[]");
+        GsonUtil item1 = new GsonUtil("{}");
+
+        if(data.isValid()){
+            for (int i= 0;i<data.getLength();i++){
+                GsonUtil item = data.getObject(i, "{}");
+                if(item.getArray(TBController.getInstance().getDescByIndex(ChainType)) == null){
+                    data1.put(item);
+                }
+            }
+        }
+        item1.put(TBController.getInstance().getDescByIndex(ChainType),toJson(mNodeList));
+        data1.put(item1);
+        json.put("data",data1);
         FileUtil.putStringToSp(AppConfig.getContext(), Constant._node, Constant.NodeList, json.toString());
     }
 

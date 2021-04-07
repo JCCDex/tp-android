@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.tokenbank.R;
 import com.tokenbank.adapter.BaseListViewAdapter;
 import com.tokenbank.base.BlockChainData;
+import com.tokenbank.base.TBController;
 import com.tokenbank.base.WalletInfoManager;
 import com.tokenbank.config.AppConfig;
 import com.tokenbank.config.Constant;
@@ -74,7 +75,7 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
         app.icinUrl = item.getString("icin_url","");
         app.appName = item.getString("dapp_name","");
         app.appUrl = item.getString("dapp_url","");
-        app.desc = item.getString("desc","");
+        app.chainType = item.getInt("chainType",-1);
         app.support = item.getString("support","");
         return app;
     }
@@ -100,12 +101,11 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
         mViewGroup.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String desc = BlockChainData.getInstance().getDescByHid(WalletInfoManager.getInstance().getWalletType());
                 AppInfo appInfo = mAppList.get(position);
-                if(appInfo.desc.equals("##") || appInfo.desc.equals(desc)){
+                if(appInfo.chainType == -1 || appInfo.chainType == TBController.getInstance().getCurrentChainType()){
                     startActivity(new Intent(getActivity(), WebActivity.class).putExtra(Constant.LOAD_URL, appInfo));
                 } else {
-                    ViewUtil.showSysAlertDialog(getContext(), getString(R.string.toast_walletError_dapp,appInfo.desc), getString(R.string.dialog_btn_confirm));
+                    ViewUtil.showSysAlertDialog(getContext(), getString(R.string.toast_walletError_dapp,TBController.getInstance().getDescByIndex(appInfo.chainType)), getString(R.string.dialog_btn_confirm));
                 }
             }
         });
@@ -184,7 +184,7 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
     public static class AppInfo implements Parcelable {
         public String icinUrl;
         public String appName;
-        public String desc;
+        public int chainType;
         public String support;
         public String appUrl;
         private AppInfo(){
@@ -194,7 +194,7 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
         protected AppInfo(Parcel in) {
             icinUrl = in.readString();
             appName = in.readString();
-            desc = in.readString();
+            chainType = in.readInt();
             support = in.readString();
             appUrl = in.readString();
         }
@@ -220,7 +220,7 @@ public class DappFragment extends BaseFragment implements View.OnClickListener{
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(this.icinUrl);
             dest.writeString(this.appName);
-            dest.writeString(this.desc);
+            dest.writeInt(this.chainType);
             dest.writeString(this.support);
             dest.writeString(this.appUrl);
         }

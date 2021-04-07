@@ -33,6 +33,7 @@ import com.tokenbank.adapter.BaseRecycleAdapter;
 import com.tokenbank.adapter.BaseRecyclerViewHolder;
 import com.tokenbank.base.BlockChainData;
 import com.tokenbank.base.BaseWalletUtil;
+import com.tokenbank.base.BlockNodeData;
 import com.tokenbank.base.TBController;
 import com.tokenbank.base.WCallback;
 import com.tokenbank.base.WalletInfoManager;
@@ -43,12 +44,16 @@ import com.tokenbank.utils.DefaultItemDecoration;
 import com.tokenbank.utils.FileUtil;
 import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.NetUtil;
-import com.tokenbank.utils.TLog;
 import com.tokenbank.utils.ToastUtil;
 import com.tokenbank.utils.TokenImageLoader;
 import com.tokenbank.utils.Util;
 import com.tokenbank.utils.ViewUtil;
+import com.tokenbank.web.ChainChangeEvent;
 import com.zxing.activity.CaptureActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 
 public class MainWalletFragment extends BaseFragment implements View.OnClickListener,
@@ -143,6 +148,7 @@ public class MainWalletFragment extends BaseFragment implements View.OnClickList
         view.findViewById(R.id.wallet_action_receive).setOnClickListener(this);
         view.findViewById(R.id.wallet_action_transfer).setOnClickListener(this);
         view.findViewById(R.id.wallet_action_transfer1).setOnClickListener(this);
+        EventBus.getDefault().register(this);
         isViewCreated = true;
     }
 
@@ -153,11 +159,31 @@ public class MainWalletFragment extends BaseFragment implements View.OnClickList
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().removeAllStickyEvents();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onEvent(ChainChangeEvent chainChangeEvent) {
+        if(chainChangeEvent.getEventName().equals("accountsChanged")){
+            TBController.getInstance().init();
+            BlockNodeData.getInstance().initNode();
+            Log.d(TAG, "onEvent: "+WalletInfoManager.getInstance().getWalletType());
+            Log.d(TAG, "onEvent: +++++++++ = "+TBController.getInstance().getCurrentChainType());
+            refresh();
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         if (!NetUtil.isNetworkAvailable(getActivity())) {
             ToastUtil.toast(getContext(), getString(R.string.toast_no_network));
             return;
         }
+
         switch (view.getId()) {
             case R.id.tv_wallet_name:
                 showWalletMenuPop();
@@ -372,7 +398,6 @@ public class MainWalletFragment extends BaseFragment implements View.OnClickList
                 @Override
                 public void onScanClick() {
                     startActivityForResult(new Intent(getActivity(), CaptureActivity.class), SCAN_REQUEST_CODE);
-
                 }
             });
         }
@@ -562,7 +587,6 @@ public class MainWalletFragment extends BaseFragment implements View.OnClickList
         }
 
         private void handleTokenRequestResult(final String params, final boolean loadmore, GsonUtil json) {
-//            TLog.d(TAG, "token list:" + json);
             GsonUtil data = json.getObject("data", "{}");
             unit = data.getString("unit", "¥");
             GsonUtil tokens = json.getArray("data", "");
