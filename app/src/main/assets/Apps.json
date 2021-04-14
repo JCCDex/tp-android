@@ -36,8 +36,8 @@
       "icin_url" : ""
     },
     {
-      "dapp_name": "迷恋猫",
-      "dapp_url": "https://www.cryptokitties.co/?utm_source=tokenpocket",
+      "dapp_name": "cryptokitties",
+      "dapp_url": "https://www.cryptokitties.co/sign-in?redirect_url=L215LWtpdHRpZXM%3D",
       "desc":"##",
       "support": "MetaMask",
       "icin_url" : ""
@@ -51,7 +51,7 @@
     },
     {
       "dapp_name": "uniswap",
-      "dapp_url": "https://app.uniswap.org/?utm_source=DappRadar&utm_medium=deeplink&utm_campaign=visit-website#/swap",
+      "dapp_url": "https://app.uniswap.org/?utm_source=DappRadar&utm_medium=deeplink&utm_campaign=visit-website",
       "desc":"##",
       "support": "MetaMask",
       "icin_url" : ""

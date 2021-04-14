@@ -9,7 +9,6 @@ import android.webkit.JavascriptInterface;
 import com.just.agentweb.AgentWeb;
 import com.tokenbank.R;
 import com.tokenbank.base.BaseWalletUtil;
-import com.tokenbank.base.BlockChainData;
 import com.tokenbank.base.BlockNodeData;
 import com.tokenbank.base.TBController;
 import com.tokenbank.base.WCallback;
@@ -47,10 +46,10 @@ public class MateMarkBridge {
 
     @JavascriptInterface
     public void callHandler(String methodName, String params, final String callbackId) {
+        Log.e(TAG, "callHandler: "+methodName);
         mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
         GsonUtil result = new GsonUtil("{}");
         GsonUtil ArrayFormResult = new GsonUtil("[]");
-        Log.e(TAG, "原生的这个方法被调用 ： "+methodName + "   参数为 "+ params);
         switch (methodName){
             case "eth_accounts":
                 result.putString("result",mCurrentWallet.waddress);
@@ -99,6 +98,7 @@ public class MateMarkBridge {
                 });
                 break;
             case "eth_requestAccounts":
+            case "wallet_requestPermissions":
                 notifySuccessResult(mCurrentWallet.waddress,callbackId);
                 break;
             case "eth_getEncryptionPublicKey":
@@ -134,13 +134,12 @@ public class MateMarkBridge {
                     }
                 });
                 break;
-            case "wallet_requestPermissions":
-
-                break;
             case "eth_sendTransaction":
-                Log.d(TAG, "callHandler: "+params);
+                notifySuccessResult(mCurrentWallet.wpk,callbackId);
+                /*
                 final GsonUtil TransactionParam = new GsonUtil(params);
                 TransactionParam.putString("secret",mCurrentWallet.wpk);
+                TransactionParam.putString("abi","MetaMask");
                 //这个丑东西怎么处理掉
                 AppConfig.postOnUiThread(new Runnable() {
                     @Override
@@ -154,7 +153,9 @@ public class MateMarkBridge {
                                             @Override
                                             public void onGetWResult(int ret, GsonUtil extra) {
                                                 if(ret == 0){
-                                                    mWalletUtil.sendSignedTransaction(extra.getString("r", ""), new WCallback() {
+                                                    String rawTransaction  = extra.getString("rawTransaction", "");
+                                                    Log.d(TAG, "onGetWResult: 签名为 "+rawTransaction);
+                                                    mWalletUtil.sendSignedTransaction(rawTransaction, new WCallback() {
                                                         @Override
                                                         public void onGetWResult(int ret, GsonUtil extra) {
                                                             if(ret == 0){
@@ -162,12 +163,14 @@ public class MateMarkBridge {
                                                                 String hash = extra.getString("hash","");
                                                                 notifySuccessResult(hash,callbackId);
                                                             } else {
-                                                                notifyFailedResult(extra.getString("err","sendTransaction failed"),callbackId);
+                                                                Log.d(TAG, "onGetWResult: 交易上链失败");
+                                                                notifyFailedResult("sendTransaction failed",callbackId);
                                                             }
                                                         }
                                                     });
                                                 } else{
-                                                    notifyFailedResult(extra.getString("err","sign failed"),callbackId);
+                                                    Log.d(TAG, "onGetWResult: 签名失败");
+                                                    notifyFailedResult("sign failed",callbackId);
                                                 }
                                             }
                                         });
@@ -179,12 +182,14 @@ public class MateMarkBridge {
                         }, mCurrentWallet.whash, "transaction").show();
                     }
                 });
+
+                 */
                 break;
             case "wallet_scanQRCode":
                 CaptureActivity.startCaptureActivity(mContext, callbackId);
                 break;
             case "wallet_watchAsset":
-                //TODO 添加合约
+                //TODO 添加 ERC20合约
                 /*
                 type: 'ERC20',
                 options: {
@@ -204,7 +209,7 @@ public class MateMarkBridge {
 
                 break;
             default:
-                Log.e(TAG, "callHandler: no such method : "+methodName);
+                Log.e(TAG, "callHandler:  不存在该函数 : "+methodName +" params =  "+params);
                 break;
 
         }

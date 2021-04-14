@@ -19,7 +19,6 @@
     <script>
     //用来验证框架可用性，MateMask提供了专用的测试 demo
         function Connected(){
-            console.log("+++++++++++++++++++++")
             test1().then((result) =>{
                 showElement(result)
             }).catch((e) =>{
@@ -39,14 +38,18 @@
 
         function getPermissionsDisplayString (permissionsArray) {
           if (permissionsArray.length === 0) {
-            console.log("+++++++++++++++++++++222222222222")
             return 'No permissions found.'
           }
           const permissionNames = permissionsArray.map((perm) => perm.parentCapability)
-          console.log("+++++++++++++++++++++33333333333333  "+permissionNames.toString())
           return permissionNames.reduce((acc, name) => `${acc}${name}, `, '').replace(/, $/u, '')
         }
 
+        function Enable(){
+            const { ethereum } = window
+            ethereum.enable().then((result) => {
+                showElement(Array.isArray(result))
+            })
+        }
 
     </script>
 </head>
@@ -61,6 +64,7 @@
  -->
 <body>
 <p><input type="button" class = "button" id="enter" value="Connected" onclick="Connected()"/></p>
+<p><input type="button" class = "button" id="enter2" value="Connected" onclick="Enable()"/></p>
 </body>
 
 </html>

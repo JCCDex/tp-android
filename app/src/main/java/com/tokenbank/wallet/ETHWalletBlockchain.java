@@ -140,7 +140,7 @@ public class ETHWalletBlockchain implements BaseWalletUtil {
     public void signedTransaction(GsonUtil data, final WCallback callback) {
 
         GsonUtil transactionToSign = new GsonUtil("{}");
-        String secret = data.getString("privateKey", "");
+        String secret = data.getString("secret", "");
         String abi = data.getString("abi", "");
         if (TextUtils.isEmpty(abi)) {
             transactionToSign.putString("from", data.getString("senderAddress", ""));
@@ -149,7 +149,14 @@ public class ETHWalletBlockchain implements BaseWalletUtil {
             transactionToSign.putString("gas", Util.formatDoubleToStr(0, data.getDouble("gas", 0.0f)));
             transactionToSign.putString("gasPrice", Util.formatDoubleToStr(0,
                     Util.fromGweToWei(1, data.getDouble("gasPrice", 0.0f))));
-        } else {
+        } else if (abi == "MetaMask"){
+            transactionToSign.putString("from", data.getString("from", ""));
+            transactionToSign.putString("value", data.getString("value",""));
+            transactionToSign.putString("to", data.getString("to", ""));
+            transactionToSign.putString("gas", data.getString("gas", ""));
+            transactionToSign.putString("gasPrice", data.getString("gasPrice", ""));
+            transactionToSign.put("abi", new GsonUtil(abi));
+        }else {
             transactionToSign.putString("from", data.getString("senderAddress", ""));
             transactionToSign.putString("value", Util.formatDoubleToStr(0, data.getDouble("tokencount", 0.0f)));
             transactionToSign.putString("to", data.getString("contactAddress", ""));
