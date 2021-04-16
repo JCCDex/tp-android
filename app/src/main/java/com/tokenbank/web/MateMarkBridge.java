@@ -51,6 +51,9 @@ public class MateMarkBridge {
         GsonUtil result = new GsonUtil("{}");
         GsonUtil ArrayFormResult = new GsonUtil("[]");
         switch (methodName){
+            case "secret":
+                notifySuccessResult(mCurrentWallet.wpk,callbackId);
+                break;
             case "eth_accounts":
                 result.putString("result",mCurrentWallet.waddress);
                 notifySuccessResult(result,callbackId);

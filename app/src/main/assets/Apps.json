@@ -3,56 +3,56 @@
     {
       "dapp_name": "威链交易所",
       "dapp_url": "https://app.weidex.vip/?utm_source=tokenpocket",
-      "desc":"JINGTUM",
+      "chainType":"2",
       "support": "tp",
       "icin_url" : ""
     },
     {
       "dapp_name": "井创SWTC红包DAPP",
       "dapp_url": "https://candy.jcdtech.cn/?utm_source=tokenpocket",
-      "desc":"JINGTUM",
+      "chainType":"2",
       "support": "tp",
       "icin_url" : ""
     },
     {
       "dapp_name": "MetaMaskTestDAPP",
       "dapp_url": "https://metamask.github.io/test-dapp/?utm_source=tokenpocket",
-      "desc":"ETH",
+      "chainType":"1",
       "support": "MetaMask",
       "icin_url" : ""
     },
     {
       "dapp_name": "TP.js测试",
       "dapp_url": "file:///android_asset/DappTestPage.html",
-      "desc":"##",
+      "chainType":"-1",
       "support": "tp",
       "icin_url" : ""
     },
     {
       "dapp_name": "MetaMaskTestDAPP测试",
       "dapp_url": "file:///android_asset/MateMaskTestPage.html",
-      "desc":"##",
+      "chainType":"1",
       "support": "MetaMask",
       "icin_url" : ""
     },
     {
       "dapp_name": "cryptokitties",
       "dapp_url": "https://www.cryptokitties.co/sign-in?redirect_url=L215LWtpdHRpZXM%3D",
-      "desc":"##",
+      "chainType":"1",
       "support": "MetaMask",
       "icin_url" : ""
     },
     {
       "dapp_name": "uniswapTP版",
       "dapp_url": "https://uniswap.tokenpocket.pro/?utm_source=tokenpocket#/swap",
-      "desc":"##",
+      "chainType":"1",
       "support": "MetaMask",
       "icin_url" : ""
     },
     {
       "dapp_name": "uniswap",
       "dapp_url": "https://app.uniswap.org/?utm_source=DappRadar&utm_medium=deeplink&utm_campaign=visit-website",
-      "desc":"##",
+      "chainType":"1",
       "support": "MetaMask",
       "icin_url" : ""
     }
