@@ -166,7 +166,7 @@ public class ETHWalletBlockchain implements BaseWalletUtil {
             transactionToSign.putString("toAddress", data.getString("receiverAddress", ""));
         }
 
-        EthereumWallet.getInstance().sign(transactionToSign.getObj(), secret, new JCallback() {
+        EthereumWallet.getInstance().signTransaction(transactionToSign.getObj(), secret, new JCallback() {
             @Override
             public void completion(JCCJson json) {
                 String rawTransaction = json.getString("rawTransaction");

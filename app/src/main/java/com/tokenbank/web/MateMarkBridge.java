@@ -6,6 +6,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
+import com.android.jccdex.app.base.JCallback;
+import com.android.jccdex.app.ethereum.EthereumWallet;
+import com.android.jccdex.app.util.JCCJson;
 import com.just.agentweb.AgentWeb;
 import com.tokenbank.R;
 import com.tokenbank.base.BaseWalletUtil;
@@ -14,11 +17,14 @@ import com.tokenbank.base.TBController;
 import com.tokenbank.base.WCallback;
 import com.tokenbank.base.WalletInfoManager;
 import com.tokenbank.config.AppConfig;
+import com.tokenbank.dialog.DappMessageDialog;
 import com.tokenbank.dialog.PwdDialog;
 import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.ToastUtil;
 import com.tokenbank.utils.ViewUtil;
 import com.zxing.activity.CaptureActivity;
+
+import org.json.JSONObject;
 
 /**
  * @ClassName MateMarkBridge
@@ -46,17 +52,16 @@ public class MateMarkBridge {
 
     @JavascriptInterface
     public void callHandler(String methodName, String params, final String callbackId) {
-        Log.e(TAG, "callHandler: "+methodName);
+        Log.e(TAG, "callHandler: "+methodName + " params = "+params);
+        GsonUtil param = new GsonUtil(params);
+        GsonUtil msg = new GsonUtil(param.getString("param",""));
         mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
-        GsonUtil result = new GsonUtil("{}");
-        GsonUtil ArrayFormResult = new GsonUtil("[]");
         switch (methodName){
             case "secret":
                 notifySuccessResult(mCurrentWallet.wpk,callbackId);
                 break;
             case "eth_accounts":
-                result.putString("result",mCurrentWallet.waddress);
-                notifySuccessResult(result,callbackId);
+                notifySuccessResult(mCurrentWallet.waddress,callbackId);
                 break;
             case "getNode":
                 notifySuccessResult(BlockNodeData.getInstance().getCurrentNode().url,callbackId);
@@ -105,16 +110,142 @@ public class MateMarkBridge {
                 notifySuccessResult(mCurrentWallet.waddress,callbackId);
                 break;
             case "eth_getEncryptionPublicKey":
-                Log.d(TAG, "eth_getEncryptionPublicKey: "+params);
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ViewUtil.showSysAlertDialog(mContext, mContext.getString(R.string.enter_title_prompt), mContext.getString(R.string.toast_allow_web3_Permissions),
+                            mContext.getString(R.string.dialog_btn_confirm), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    EthereumWallet.getInstance().getEncryptionPublicKey(mCurrentWallet.wpk, new JCallback() {
+                                        @Override
+                                        public void completion(JCCJson json) {
+                                            String publicKey = json.getString("publicKey");
+                                            if(!publicKey.equals("")){
+                                                notifySuccessResult(publicKey,callbackId);
+                                            }
+                                        }
+                                    });
+                                    dialog.dismiss();
+                                }
+                            }, mContext.getString(R.string.button_reject), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    notifySuccessResult("false",callbackId);
+                                    dialog.dismiss();
+                                }
+                            });
+                    }
+                });
                 break;
             case "eth_signTypedData":
-                Log.d(TAG, "eth_signTypedData: "+params);
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DappMessageDialog(mContext, new DappMessageDialog.OnOrderListener() {
+                          @Override
+                          public void onConfirmOrder() {
+                              EthereumWallet.getInstance().signTypedData(msg.getObj(),mCurrentWallet.wpk, new JCallback() {
+                                  @Override
+                                  public void completion(JCCJson json) {
+                                      String result = json.getString("result");
+                                      if(!result.equals("")){
+                                          notifySuccessResult(result,callbackId);
+                                      } else {
+                                          notifyFailedResult("false",callbackId);
+                                      }
+                                  }
+                              });
+                          }
+                          @Override
+                          public void onRejectOrder() {
+                              notifyFailedResult("false",callbackId);
+                          }
+                        },mCurrentWallet.waddress, msg.toString()).show();
+                    }
+                });
                 break;
             case "eth_signTypedData_v3":
-                Log.d(TAG, "eth_signTypedData_v3: "+params);
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DappMessageDialog(mContext, new DappMessageDialog.OnOrderListener() {
+                            @Override
+                            public void onConfirmOrder() {
+                                EthereumWallet.getInstance().signTypedData_v3(msg.getObj(),mCurrentWallet.wpk, new JCallback() {
+                                    @Override
+                                    public void completion(JCCJson json) {
+                                        String result = json.getString("result");
+                                        if(!result.equals("")){
+                                            notifySuccessResult(result,callbackId);
+                                        } else {
+                                            notifyFailedResult("false",callbackId);
+                                        }
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onRejectOrder() {
+                                notifyFailedResult("false",callbackId);
+                            }
+                        },mCurrentWallet.waddress, msg.toString()).show();
+                    }
+                });
+                break;
+            case "personal_sign":
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DappMessageDialog(mContext, new DappMessageDialog.OnOrderListener() {
+                            @Override
+                            public void onConfirmOrder() {
+                                EthereumWallet.getInstance().personalSign(msg.toString(),mCurrentWallet.wpk,param.getString("password",""),new JCallback() {
+                                    @Override
+                                    public void completion(JCCJson json) {
+                                        String result = json.getString("result");
+                                        Log.d(TAG, "completion: result = "+result);
+                                        if(!result.equals("")){
+                                            notifySuccessResult(result,callbackId);
+                                        } else {
+                                            notifyFailedResult("false",callbackId);
+                                        }
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onRejectOrder() {
+                                notifyFailedResult("false",callbackId);
+                            }
+                        },mCurrentWallet.waddress, msg.toString()).show();
+                    }
+                });
                 break;
             case "eth_signTypedData_v4":
-                Log.d(TAG, "eth_signTypedData_v4: "+params);
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DappMessageDialog(mContext, new DappMessageDialog.OnOrderListener() {
+                            @Override
+                            public void onConfirmOrder() {
+                                EthereumWallet.getInstance().signTypedData_v4(msg.getObj(),mCurrentWallet.wpk, new JCallback() {
+                                    @Override
+                                    public void completion(JCCJson json) {
+                                        String result = json.getString("result");
+                                        if(!result.equals("")){
+                                            notifySuccessResult(result,callbackId);
+                                        } else {
+                                            notifyFailedResult("false",callbackId);
+                                        }
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onRejectOrder() {
+                                notifyFailedResult("false",callbackId);
+                            }
+                        },mCurrentWallet.waddress, msg.toString()).show();
+                    }
+                });
                 break;
             case "wallet_getPermissions":
                 AppConfig.postOnUiThread(new Runnable() {
@@ -137,9 +268,35 @@ public class MateMarkBridge {
                     }
                 });
                 break;
+
+            case  "eth_decrypt":
+                AppConfig.postOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DappMessageDialog(mContext, new DappMessageDialog.OnOrderListener() {
+                            @Override
+                            public void onConfirmOrder() {
+                                EthereumWallet.getInstance().decrypt(msg.toString(),mCurrentWallet.wpk, new JCallback() {
+                                    @Override
+                                    public void completion(JCCJson json) {
+                                        String result = json.getString("result");
+                                        if(!result.equals("")){
+                                            notifySuccessResult(result,callbackId);
+                                        } else {
+                                            notifyFailedResult("false",callbackId);
+                                        }
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onRejectOrder() {
+                                notifyFailedResult("false",callbackId);
+                            }
+                        },mCurrentWallet.waddress, msg.toString()).show();
+                    }
+                });
+                break;
             case "eth_sendTransaction":
-                notifySuccessResult(mCurrentWallet.wpk,callbackId);
-                /*
                 final GsonUtil TransactionParam = new GsonUtil(params);
                 TransactionParam.putString("secret",mCurrentWallet.wpk);
                 TransactionParam.putString("abi","MetaMask");
@@ -185,8 +342,6 @@ public class MateMarkBridge {
                         }, mCurrentWallet.whash, "transaction").show();
                     }
                 });
-
-                 */
                 break;
             case "wallet_scanQRCode":
                 CaptureActivity.startCaptureActivity(mContext, callbackId);
@@ -207,9 +362,6 @@ public class MateMarkBridge {
                 break;
             case "wallet_addEthereumChain":
                 //待研究是否允许提供
-                break;
-            case "personal_sign":
-
                 break;
             default:
                 Log.e(TAG, "callHandler:  不存在该函数 : "+methodName +" params =  "+params);

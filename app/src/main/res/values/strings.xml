@@ -155,6 +155,7 @@
     <string name="content_gas">矿工费用</string>
     <string name="content_slow">慢</string>
     <string name="content_fast">快</string>
+    <string name="button_reject">拒绝</string>
     <string name="content_splash">让财富更自由</string>
     <string name="content_payer">发款方</string>
     <string name="content_payee">收款方</string>
@@ -192,6 +193,7 @@
     <string name="dialog_title_enter_password">请输入密码</string>
     <string name="dialog_btn_confirm">确认</string>
     <string name="title_order_details">订单详情</string>
+    <string name="title_dapp_request_details">请求详情</string>
     <string name="content_to_address">转入地址</string>
     <string name="content_payment_address">付款钱包</string>
     <string name="content_transfer">转账</string>
@@ -238,6 +240,7 @@
     <string name="eos_browser">EOS浏览器</string>
     <string name="picture_save_false">图片保存失败</string>
     <string name="sign_failed">签名失败</string>
+    <string name="Information_to_be_signed">代签名信息</string>
     <string name="btn_create_wallet_fail">创建钱包失败</string>
     <string name="btn_add_node">创建节点</string>
     <string name="titleBar_select_import_way">选择导入方式</string>

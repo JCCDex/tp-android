@@ -196,11 +196,14 @@
     <string name="title_order_details">OrderDetail</string>
     <string name="content_to_address">To</string>
     <string name="content_payment_address">Pay</string>
+    <string name="Information_to_be_signed">Information to be signed</string>
     <string name="content_transfer">Transfer</string>
     <string name="enter_title_amount">Amount</string>
+    <string name="title_dapp_request_details">request details</string>
     <string name="btn_confirm_payment">Confirm</string>
     <string name="dialog_content_safety_warning">Warning, please keep it safe after exporting the private key, do not disclose it, and if it leaks, it may lead to asset loss.</string>
     <string name="dialog_btn_copy_private_key">Copy</string>
+    <string name="button_reject">reject</string>
     <string name="dialog_title_gas_setting">Gas Setting</string>
     <string name="content_recommend">Recommend</string>
     <string name="dialog_title_update">Update</string>

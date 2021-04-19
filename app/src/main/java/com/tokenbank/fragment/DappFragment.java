@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.jccdex.app.base.JCallback;
+import com.android.jccdex.app.ethereum.EthereumWallet;
+import com.android.jccdex.app.util.JCCJson;
 import com.tokenbank.R;
 import com.tokenbank.adapter.BaseListViewAdapter;
 import com.tokenbank.base.BlockChainData;

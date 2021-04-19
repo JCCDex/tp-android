@@ -123,19 +123,22 @@ public class BaseActivity extends AppCompatActivity {
             switch (TBController.getInstance().getCurrentChainType()) {
                 case TBController.ETH_INDEX:
                     EthereumWallet.getInstance().init(this);
-                    Log.d(TAG, "onEvent: "+url);
                     EthereumWallet.getInstance().initWeb3Provider(url);
+                    Log.d(TAG, "completion: init web3 over");
                     break;
                 case TBController.SWT_INDEX:
                     JingtumWallet.getInstance().init(this);
+                    Log.d(TAG, "completion: init jingtum over");
                     break;
                 case TBController.MOAC_INDEX:
                     MoacWallet.getInstance().init(this);
                     MoacWallet.getInstance().initChain3Provider(url);
+                    Log.d(TAG, "completion: init moac over");
                     break;
                 case TBController.EOS_INDEX:
                     EosWallet.getInstance().init(this);
                     EosWallet.getInstance().initEosProvider("aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906", url);
+                    Log.d(TAG, "completion: init eos over");
                     break;
                 case TBController.FST_INDEX:
                     FstWallet.getInstance().init(this, url, new JCallback() {
