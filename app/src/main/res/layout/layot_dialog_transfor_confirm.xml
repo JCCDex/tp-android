@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text=""
+            android:text="@string/toast_allow_dapp_Transaction"
             android:textColor="@color/common_black_fontcolor"
             android:textSize="17sp" />
 
@@ -52,10 +52,10 @@
             android:layout_height="wrap_content"
             android:text="@string/enter_title_transfer_address"
             android:textColor="@color/common_black_fontcolor"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <TextView
-            android:id="@+id/tv_choose_address"
+            android:id="@+id/from_wallet_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
@@ -63,7 +63,8 @@
             android:maxLines="2"
             android:text=""
             android:textColor="@color/common_black_fontcolor"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            />
     </LinearLayout>
 
     <View
@@ -75,7 +76,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:gravity="center_vertical"
@@ -84,19 +85,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Information_to_be_signed"
             android:textColor="@color/common_black_fontcolor"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:text="@string/content_to_address" />
 
         <TextView
-            android:id="@+id/tv_dapp_message"
             android:layout_width="279dp"
             android:layout_height="126dp"
             android:layout_marginLeft="18dp"
             android:ellipsize="end"
             android:text=""
             android:textColor="@color/common_black_fontcolor"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:id="@+id/to_wallet_address" />
+
     </LinearLayout>
 
     <View
@@ -105,6 +107,69 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:background="@color/split_color" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_black_fontcolor"
+            android:textSize="15sp"
+            android:text="@string/enter_title_amount" />
+
+        <TextView
+            android:layout_width="279dp"
+            android:layout_height="126dp"
+            android:layout_marginLeft="18dp"
+            android:ellipsize="end"
+            android:text=""
+            android:textColor="@color/common_black_fontcolor"
+            android:textSize="15sp"
+
+            android:id="@+id/edt_transfer_num"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@color/split_color" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_black_fontcolor"
+            android:textSize="15sp"
+            android:text="@string/enter_title_transfer_gas" />
+
+        <TextView
+            android:id="@+id/tv_transfer_gas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:drawableRight="@drawable/ic_arrow_right"
+            android:hint="@string/enter_hint_transfer_gas"
+            android:textColor="@color/color_text_3"
+            android:textColorHint="@color/color_text_80"
+            android:textSize="@dimen/text_size_16" />
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/tv_confirm"
@@ -126,6 +191,5 @@
         android:text="@string/button_reject"
         android:textColor="@color/white"
         android:textSize="15sp" />
-
 
 </LinearLayout>

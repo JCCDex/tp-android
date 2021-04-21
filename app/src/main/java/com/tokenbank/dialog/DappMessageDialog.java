@@ -2,7 +2,6 @@ package com.tokenbank.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,22 +23,25 @@ public class DappMessageDialog extends BaseDialog implements View.OnClickListene
     private static final String TAG = "DappMessageDialog";
     private String address;
     private String message;
+    private String title;
     private OnOrderListener mOnOrderListener;
     private TextView addressText;
     private TextView messageText;
     private TextView mTvConfirm;
     private TextView mTvReject;
     private ImageView imageView;
+    private TextView titleText;
 
     public interface OnOrderListener {
         void onConfirmOrder();
         void onRejectOrder();
     }
 
-    public DappMessageDialog(@NonNull Context context, OnOrderListener onOrderListener,String address,String message) {
+    public DappMessageDialog(@NonNull Context context, OnOrderListener onOrderListener,String address,String message,String title) {
         super(context, R.style.DialogStyle);
         this.address = address;
         this.message = message;
+        this.title = title;
         mOnOrderListener = onOrderListener;
     }
 
@@ -63,11 +65,13 @@ public class DappMessageDialog extends BaseDialog implements View.OnClickListene
         messageText = findViewById(R.id.tv_dapp_message);
         addressText = findViewById(R.id.tv_choose_address);
         imageView = findViewById(R.id.img_close);
+        titleText = findViewById(R.id.text_title);
         messageText.setText(message);
         addressText.setText(address);
         mTvConfirm.setOnClickListener(this);
         mTvReject.setOnClickListener(this);
         imageView.setOnClickListener(this);
+        titleText.setText(title);
     }
 
     @Override
@@ -83,7 +87,7 @@ public class DappMessageDialog extends BaseDialog implements View.OnClickListene
                 mOnOrderListener.onRejectOrder();
             }
             dismiss();
-        } else {
+        } else if(view == imageView ) {
             dismiss();
         }
     }

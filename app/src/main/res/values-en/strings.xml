@@ -268,5 +268,7 @@
     <string name="toast_ConfirmNode_delete">The default node cannot be deleted！</string>
     <string name="tip_max">max</string>
     <string name="toast_walletError_dapp">The app is not supported in the current wallet. Please switch to the %1s Wallet</string>
-    <string name="toast_allow_web3_Permissions">The current app is trying to get your wallet permission</string>
+    <string name="toast_allow_dapp_Permissions">Request wallet permission</string>
+    <string name="toast_allow_dapp_Sign">Request sign permission</string>
+    <string name="toast_allow_dapp_Transaction">Request transaction permission</string>
 </resources>

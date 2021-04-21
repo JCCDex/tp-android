@@ -15,7 +15,8 @@ import android.widget.TextView;
 import com.tokenbank.R;
 import com.tokenbank.utils.FileUtil;
 import com.tokenbank.utils.TLog;
-
+import com.tokenbank.utils.ToastUtil;
+import com.tokenbank.utils.ViewUtil;
 
 
 public class PwdDialog extends Dialog implements View.OnClickListener {
@@ -26,6 +27,7 @@ public class PwdDialog extends Dialog implements View.OnClickListener {
     private TextView mTvOk;
     private String mPwdContent;
     private String mTag;
+    private Context mContext;
 
     private PwdResult mPwdResult;
 
@@ -39,6 +41,7 @@ public class PwdDialog extends Dialog implements View.OnClickListener {
         this.mPwdResult = authPwdListener;
         this.mPwdContent = pwdHash;
         this.mTag = tag;
+        this.mContext = context;
     }
 
     @Override
@@ -67,11 +70,13 @@ public class PwdDialog extends Dialog implements View.OnClickListener {
                 return;
             }
             if (TextUtils.isEmpty(mEdtPw.getText().toString())) {
+                showPWErrorMessage();
                 mPwdResult.authPwd(mTag, false);
             } else {
                 if (TextUtils.equals(mPwdContent, FileUtil.getStringContent(mEdtPw.getText().toString()))) {
                     mPwdResult.authPwd(mTag, true);
                 } else {
+                    showPWErrorMessage();
                     mPwdResult.authPwd(mTag,false);
                 }
             }
@@ -86,6 +91,10 @@ public class PwdDialog extends Dialog implements View.OnClickListener {
         mTvOk = (TextView) findViewById(R.id.tv_ok);
         mTvOk.setOnClickListener(this);
         mEdtPw = (EditText) findViewById(R.id.edt_dialog_pwd);
+    }
+
+    private void showPWErrorMessage(){
+        ToastUtil.toast(mContext,mContext.getString(R.string.toast_password_incorrect));
     }
 
 }

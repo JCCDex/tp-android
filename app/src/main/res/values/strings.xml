@@ -240,7 +240,7 @@
     <string name="eos_browser">EOS浏览器</string>
     <string name="picture_save_false">图片保存失败</string>
     <string name="sign_failed">签名失败</string>
-    <string name="Information_to_be_signed">代签名信息</string>
+    <string name="Information_to_be_signed">待签名信息</string>
     <string name="btn_create_wallet_fail">创建钱包失败</string>
     <string name="btn_add_node">创建节点</string>
     <string name="titleBar_select_import_way">选择导入方式</string>
@@ -267,5 +267,7 @@
     <string name="toast_Confirm_exit">确认退出？请重试</string>
     <string name="tip_max">最多</string>
     <string name="toast_walletError_dapp">当前钱包不支持该应用,请切换至%1s钱包</string>
-    <string name="toast_allow_web3_Permissions">当前应用试图获取您的钱包权限</string>
+    <string name="toast_allow_dapp_Permissions">请求钱包权限</string>
+    <string name="toast_allow_dapp_Sign">请求签名权限</string>
+    <string name="toast_allow_dapp_Transaction">请求交易权限</string>
 </resources>
