@@ -8,7 +8,7 @@
       "icin_url" : ""
     },
     {
-      "dapp_name": "井创SWTC红包DAPP",
+      "dapp_name": "SWTC红包",
       "dapp_url": "https://candy.jcdtech.cn/?utm_source=tokenpocket",
       "chainType":"2",
       "support": "tp",
@@ -29,14 +29,7 @@
       "icin_url" : ""
     },
     {
-      "dapp_name": "MetaMaskTestDAPP测试",
-      "dapp_url": "file:///android_asset/MateMaskTestPage.html",
-      "chainType":"1",
-      "support": "MetaMask",
-      "icin_url" : ""
-    },
-    {
-      "dapp_name": "cryptokitties",
+      "dapp_name": "迷恋猫",
       "dapp_url": "https://www.cryptokitties.co/sign-in?redirect_url=L215LWtpdHRpZXM%3D",
       "chainType":"1",
       "support": "MetaMask",
