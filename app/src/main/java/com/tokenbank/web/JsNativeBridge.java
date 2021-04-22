@@ -18,7 +18,6 @@ import com.just.agentweb.AgentWeb;
 import com.tokenbank.R;
 import com.tokenbank.activity.ImportWalletActivity;
 import com.tokenbank.base.BaseWalletUtil;
-import com.tokenbank.base.BlockChainData;
 import com.tokenbank.base.BlockNodeData;
 import com.tokenbank.base.TBController;
 import com.tokenbank.base.WCallback;

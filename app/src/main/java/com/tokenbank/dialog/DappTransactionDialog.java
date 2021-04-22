@@ -2,6 +2,7 @@ package com.tokenbank.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import com.tokenbank.utils.GsonUtil;
  */
 public class DappTransactionDialog extends BaseDialog implements View.OnClickListener {
 
+    private static final String TAG = "DappTransactionDialog";
     private ImageView mImgClose;
     private TextView mTvReceiverAddress;
     private TextView mTvSenderAddress;
@@ -40,25 +42,28 @@ public class DappTransactionDialog extends BaseDialog implements View.OnClickLis
     private String from;
     private String to;
     private String remark;
-    private double tokencount;
+    private String value;
     private double mGasPrice;
     private Context mContext;
 
     private BaseWalletUtil mWalletUtil;
 
-    public DappTransactionDialog(@NonNull Context context,String from, String to, double tokencount,  String remark ,OnOrderListener onConfirmOrderListener) {
-        super(context);
+    public DappTransactionDialog(@NonNull Context context,String from, String to, String value,  String remark ,OnOrderListener onConfirmOrderListener) {
+        super(context, R.style.DialogStyle);
         this.mContext = context;
         this.from = from;
         this.to = to;
         this.remark = remark;
-        this.tokencount = tokencount;
+        this.value = value;
+
         this.mOnConfirmOrderListener = onConfirmOrderListener;
         mWalletData = WalletInfoManager.getInstance().getCurrentWallet();
+
         if (mWalletData == null) {
             this.dismiss();
             return;
         }
+
         mWalletUtil = TBController.getInstance().getWalletUtil(mWalletData.type);
 
         mBlockChain = WalletInfoManager.getInstance().getWalletType();
@@ -90,7 +95,7 @@ public class DappTransactionDialog extends BaseDialog implements View.OnClickLis
                     if (ret == 0) {
                         String gas = extra.getString("gas", "");
                         mGasPrice = extra.getDouble("gasPrice", 0.0f);
-                        mTvGasInfo.setText(gas+"*"+mGasPrice+" = ");
+                        mTvGasInfo.setText(gas);
                     }
                 }
             });
@@ -114,8 +119,8 @@ public class DappTransactionDialog extends BaseDialog implements View.OnClickLis
 
     public void initView(){
         mImgClose = findViewById(R.id.img_close);
-        mTvReceiverAddress = findViewById(R.id.from_wallet_address);
-        mTvSenderAddress = findViewById(R.id.to_wallet_address);
+        mTvReceiverAddress = findViewById(R.id.to_wallet_address);
+        mTvSenderAddress = findViewById(R.id.from_wallet_address);
         mTvTokenCount = findViewById(R.id.edt_transfer_num);
         mTvGasInfo = findViewById(R.id.tv_transfer_gas);
         mTvConfirm = findViewById(R.id.tv_confirm);
@@ -128,7 +133,11 @@ public class DappTransactionDialog extends BaseDialog implements View.OnClickLis
 
         mTvReceiverAddress.setText(to);
         mTvSenderAddress.setText(from);
-        mTvTokenCount.setText(tokencount+remark);
-        mTvGasInfo.setText("gas");
+        Double count = 0.0;
+        if(value != null && !value.equals("")){
+            count=  mWalletUtil.getValue(mWalletUtil.getDefaultDecimal(),Double.valueOf(value));
+        }
+        mTvTokenCount.setText(count.toString()+"ETH");
+        mTvGasInfo.setText("0.0002 "+remark);
     }
 }

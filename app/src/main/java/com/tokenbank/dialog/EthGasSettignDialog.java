@@ -81,7 +81,6 @@ public class EthGasSettignDialog extends BaseDialog implements View.OnClickListe
         mSeekBarGas.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                TLog.e(TAG, "progress" + progress);
                 mGasPrice = 8.0f + progress;
                 double totalGasInWei = Util.fromGweToWei(mBlockChain, mGasPrice) * Util.getRecommendGweiGas(mBlockChain, mDefaultToken);
                 mTvGas.setText(Util.formatDoubleToStr(5, Util.fromWei(mBlockChain, totalGasInWei)));

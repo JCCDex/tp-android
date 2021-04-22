@@ -6,6 +6,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,6 +64,16 @@ public class Util {
         } catch (Exception e) {
             return 0.0f;
         }
+    }
+
+    /**
+     * 16进制转换成为string十进制数值类型字符串
+     * @param
+     * @return
+     */
+    public static String hexToDec(String hex) {
+        BigInteger data = new BigInteger(hex,16);
+        return data.toString(10);
     }
 
     //将wei转成token value, 保存len位小数， 返回string

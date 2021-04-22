@@ -90,8 +90,8 @@
             android:text="@string/content_to_address" />
 
         <TextView
-            android:layout_width="279dp"
-            android:layout_height="126dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
             android:ellipsize="end"
             android:text=""
@@ -124,8 +124,8 @@
             android:text="@string/enter_title_amount" />
 
         <TextView
-            android:layout_width="279dp"
-            android:layout_height="126dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
             android:ellipsize="end"
             android:text=""

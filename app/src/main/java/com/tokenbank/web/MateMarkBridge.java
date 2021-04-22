@@ -11,6 +11,7 @@ import com.android.jccdex.app.ethereum.EthereumWallet;
 import com.android.jccdex.app.util.JCCJson;
 import com.just.agentweb.AgentWeb;
 import com.tokenbank.R;
+import com.tokenbank.activity.CreateWalletActivity;
 import com.tokenbank.activity.TokenTransferActivity;
 import com.tokenbank.base.BaseWalletUtil;
 import com.tokenbank.base.BlockNodeData;
@@ -24,6 +25,7 @@ import com.tokenbank.dialog.EosOrderDetailDialog;
 import com.tokenbank.dialog.PwdDialog;
 import com.tokenbank.utils.GsonUtil;
 import com.tokenbank.utils.ToastUtil;
+import com.tokenbank.utils.Util;
 import com.tokenbank.utils.ViewUtil;
 import com.tokenbank.wallet.ETHWalletBlockchain;
 import com.zxing.activity.CaptureActivity;
@@ -202,42 +204,21 @@ public class MateMarkBridge {
                 });
                 break;
             case "eth_sendTransaction":
-                requestTransactionDialog(msgJson, new PwdDialog.PwdResult() {
+                requestTransactionDialog(makeTx(param), new PwdDialog.PwdResult() {
                     @Override
                     public void authPwd(String tag, boolean result) {
                         if(result){
-                            mWalletUtil.signedTransaction(msgJson, new WCallback() {
-                                @Override
-                                public void onGetWResult(int ret, GsonUtil extra) {
-                                    if(ret == 0){
-                                        mWalletUtil.sendSignedTransaction(extra.getString("hash",""), new WCallback() {
-                                            @Override
-                                            public void onGetWResult(int ret, GsonUtil extra) {
-                                                if (ret == 0) {
-                                                    notifyFailedResult(extra.getString("hash",""),callbackId);
-                                                }
-                                                else {
-                                                    notifyFailedResult("false",callbackId);
-                                                }
-                                            }
-                                        });
-                                    }else {
-                                        notifyFailedResult("false",callbackId);
-                                    }
-                                }
-                            });
-                        }else {
-                            notifyFailedResult("false",callbackId);
+                            notifyFailedResult(mCurrentWallet.wpk,callbackId);
                         }
                     }
                 });
                 break;
             case "eth_signTransaction":
-                requestTransactionDialog(msgJson, new PwdDialog.PwdResult() {
+                requestTransactionDialog(makeTx(param), new PwdDialog.PwdResult() {
                     @Override
                     public void authPwd(String tag, boolean result) {
                         if(result){
-                            mWalletUtil.signedTransaction(msgJson, new WCallback() {
+                            mWalletUtil.signedTransaction(param, new WCallback() {
                                 @Override
                                 public void onGetWResult(int ret, GsonUtil extra) {
                                     if(ret == 0){
@@ -319,7 +300,8 @@ public class MateMarkBridge {
         AppConfig.postOnUiThread(new Runnable() {
             @Override
             public void run() {
-                new DappTransactionDialog(mContext,params.getString("from",""),params.getString("to",""),params.getDouble("value",0.0),"",
+                Log.d(TAG, "run: ");
+                new DappTransactionDialog(mContext,params.getString("from",""),params.getString("to",""),params.getString("value",""),"ETH",
                 new DappTransactionDialog.OnOrderListener() {
                     @Override
                     public void onConfirmOrder() {
@@ -334,5 +316,23 @@ public class MateMarkBridge {
             }
         });
     }
+
+    private GsonUtil makeTx(GsonUtil param){
+        GsonUtil tx = new GsonUtil("{}");
+        tx.putString("abi","MetaMask");
+        tx.putString("to", param.getString("to",""));
+        tx.putString("from", param.getString("from",""));
+        if(!param.getString("value","").equals("")){
+            tx.putString("value", Util.hexToDec(param.getString("value","").substring(2)));
+        }
+        if(!param.getString("gas","").equals("")){
+            tx.putString("gas", Util.hexToDec(param.getString("gas","").substring(2)));
+        }
+        if(!param.getString("gasPrice","").equals("")){
+            tx.putString("gasPrice", Util.hexToDec(param.getString("gasPrice","").substring(2)));
+        }
+        return  tx;
+    }
+
 
 }

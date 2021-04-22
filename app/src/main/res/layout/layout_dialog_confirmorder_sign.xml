@@ -89,6 +89,7 @@
             android:textSize="15sp" />
 
         <TextView
+            android:gravity="center_vertical|left"
             android:id="@+id/tv_dapp_message"
             android:layout_width="279dp"
             android:layout_height="126dp"

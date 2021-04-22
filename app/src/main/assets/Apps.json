@@ -43,13 +43,6 @@
       "icin_url" : ""
     },
     {
-      "dapp_name": "uniswapTP版",
-      "dapp_url": "https://uniswap.tokenpocket.pro/?utm_source=tokenpocket#/swap",
-      "chainType":"1",
-      "support": "MetaMask",
-      "icin_url" : ""
-    },
-    {
       "dapp_name": "uniswap",
       "dapp_url": "https://app.uniswap.org/?utm_source=DappRadar&utm_medium=deeplink&utm_campaign=visit-website",
       "chainType":"1",
