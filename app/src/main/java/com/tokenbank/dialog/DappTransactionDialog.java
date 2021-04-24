@@ -36,7 +36,7 @@ public class DappTransactionDialog extends BaseDialog implements View.OnClickLis
     private TextView mTvReject;
 
     private OnOrderListener mOnConfirmOrderListener;
-    private WalletInfoManager.WData mWalletData; //当前使用哪个钱包转账
+    private WalletInfoManager.WData mCurrentWallet;
     private int mBlockChain;
 
     private String from;
@@ -57,14 +57,14 @@ public class DappTransactionDialog extends BaseDialog implements View.OnClickLis
         this.value = value;
 
         this.mOnConfirmOrderListener = onConfirmOrderListener;
-        mWalletData = WalletInfoManager.getInstance().getCurrentWallet();
+        mCurrentWallet = WalletInfoManager.getInstance().getCurrentWallet();
 
-        if (mWalletData == null) {
+        if (mCurrentWallet == null) {
             this.dismiss();
             return;
         }
 
-        mWalletUtil = TBController.getInstance().getWalletUtil(mWalletData.type);
+        mWalletUtil = TBController.getInstance().getWalletUtil(mCurrentWallet.type);
 
         mBlockChain = WalletInfoManager.getInstance().getWalletType();
     }
